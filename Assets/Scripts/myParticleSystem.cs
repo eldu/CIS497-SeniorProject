@@ -173,6 +173,23 @@ namespace AssemblyCSharp
 					getParticle(particleWidth - 1, j + 1));
 			}
 
+			// Secondary Constraints
+			// TODO: Clean this up
+			for (int i = 0; i < particleWidth - 1; i++) {
+				for (int j = 0; j < particleHeight - 1; j++) {
+					if (i < particleWidth - 2) {
+						makeConstraint (getParticle (i, j), getParticle (i + 2, j));
+					}
+					if (j < particleHeight - 2) {
+						makeConstraint (getParticle (i, j), getParticle (i, j + 2));
+					}
+					if (i < particleWidth - 2 && j < particleHeight - 2) {
+						makeConstraint (getParticle (i, j), getParticle (i + 2, j + 2));
+						makeConstraint (getParticle (i + 2, j), getParticle (i, j + 2));
+					}
+				}
+			}
+
 			// Pin top two corners
 			getParticle(0, 0).setPinned(true);
 			getParticle (0, particleHeight - 1).setPinned(true);

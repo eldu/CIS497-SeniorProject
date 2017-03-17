@@ -26,6 +26,7 @@ namespace AssemblyCSharp
 		private Vector3 m_vel;
 		private Vector3 m_gravity;
 		private Vector3 m_wind;
+		private Vector3 m_constraint; // Sum of forces from contraints
 
 		public myParticle(Vector3 position) {
 			m_dim = 12;
@@ -78,6 +79,15 @@ namespace AssemblyCSharp
 
 		public Vector3 getPos() {
 			return m_pos;
+		}
+
+		public void offsetPos(Vector3 offset) {
+			if (!pinned) {
+				m_pos += offset;
+				m_state [0] = m_pos.x;
+				m_state [1] = m_pos.y;
+				m_state [2] = m_pos.z;
+			}
 		}
 
 		// Get the state vector
@@ -160,10 +170,19 @@ namespace AssemblyCSharp
 			// Add default force gravity
 			addForce (m_mass * m_gravity);
 			addForce (m_wind);
+			addForce (m_constraint);
+
+			// Reset wind and constraint forces
+			m_wind = new Vector3 ();
+			m_constraint = new Vector3 ();
 		}
 
 		public void addWindForce(Vector3 force) {
 			m_wind = force;
+		}
+
+		public void addConstraintForce (Vector3 force) {
+			m_constraint = force;
 		}
 
 		//given the state compute stateDot based on the dynamics of the particle
@@ -241,12 +260,20 @@ namespace AssemblyCSharp
 			Vector3 p12 = p2.getPos() - p1.getPos();
 			float currentDistance = getlength();
 
+			if (currentDistance > restDistance + 0.0001f || currentDistance < restDistance - 0.0001f) {
+				float what = 0984.0f;
+			}
+
 			Vector3 correction = p12 * (1.0f - restDistance / currentDistance) * 0.5f;
 
 			// Add force to satisfy the constraint
 			// TODO: Damping if necessary. Is this too much?
-			p1.addForce (correction);
-			p2.addForce (correction);
+			//p1.addConstraintForce (correction);
+			//p2.addConstraintForce (-correction);
+			p1.offsetPos (correction);
+			p2.offsetPos (-correction);
+
+
 
 		}
 
