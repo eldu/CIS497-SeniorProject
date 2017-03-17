@@ -12,6 +12,7 @@ namespace AssemblyCSharp
 		public int particleHeight = 5; // number of particles in height
 		public float width = 5.0f;
 		public float height = 5.0f;
+		public int iterations = 10;
 
 		List<myParticle> particles;
 		List<Constraint> constraints;
@@ -42,8 +43,9 @@ namespace AssemblyCSharp
 		
 			return normal;
 		}
-
-		void wind(myParticle p1, myParticle p2, myParticle p3, Vector3 windDir) {
+			
+		// Adds a wind force to a triangle
+		void addWindToTriangle(myParticle p1, myParticle p2, myParticle p3, Vector3 windDir) {
 			Vector3 normal = getTriangleNormal (p1, p2, p3);
 			Vector3 normalDir = Vector3.Normalize (normal);
 			Vector3 force = normal * Vector3.Dot (normalDir, windDir); // based on area of the triangle as well
@@ -52,9 +54,20 @@ namespace AssemblyCSharp
 			p3.addForce (force);
 		}
 
+		// Add wind force to the entire cloth
+		void addWindForce(Vector3 direction) {
+			for (int i = 0; i < particleWidth - 1; i++) {
+				for (int j = 0; j < particleHeight - 1; j++) {
+					addWindToTriangle (getParticle (i + 1, j), getParticle (i, j), getParticle (i, j + 1), direction);
+					addWindToTriangle (getParticle (i + 1, j + 1), getParticle (i + 1, j), getParticle (i, j + 1), direction);
+				}
+			}
+		}
+
 		void drawTriangle (myParticle p1, myParticle p2, myParticle p3) {
 			// Drawing triangle
 			// Reference: https://docs.unity3d.com/ScriptReference/GL.TRIANGLES.html
+			// Use Tri.cs to doing smaller test cases with GL.Triangles
 
 			Vector3 p1pos = p1.getPos ();
 			Vector3 p2pos = p2.getPos ();
@@ -82,10 +95,6 @@ namespace AssemblyCSharp
 
 			for (int i = 0; i < particleWidth - 1; i++) {
 				for (int j = 0; j < particleHeight - 1; j++) {
-					Vector3 p1pos = getParticle(i, j).getPos ();
-					Vector3 p2pos = getParticle(i + 1, j).getPos ();
-					Vector3 p3pos = getParticle (i, j + 1).getPos ();
-
 					drawTriangle (getParticle (i, j), getParticle (i + 1, j), getParticle (i, j + 1));
 					drawTriangle (getParticle (i + 1, j), getParticle (i + 1, j + 1), getParticle (i, j + 1));
 				}
@@ -163,8 +172,20 @@ namespace AssemblyCSharp
 			getParticle (particleHeight - 1, 0).setPinned(true);
 		}
 	
-		void fixedUpdate() {
-			
+		Vector3 windDirection = new Vector3 (0.5f, 0.0f, 0.2f);
+		void FixedUpdate() {
+			addWindForce (windDirection);
+
+			// Satisfy the Contraints
+			for (int i = 0; i < iterations; i++) {
+				for (int j = 0; j < constraints.Count; j++) {
+					constraints [j].satisfy ();
+				}
+			}
+				
+			for (int i = 0; i < particles.Count ; i++) {
+				particles [i].updateParticle ();
+			}
 		}
 	}
 }

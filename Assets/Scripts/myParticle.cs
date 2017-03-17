@@ -104,7 +104,7 @@ namespace AssemblyCSharp
 		public void updateState(float deltaT) {
 			// Add your code here
 			// Predicted state at t_k+1
-			List<float> p_state = new List<float>(11);
+			float[] p_state = new float[12];
 
 			// x_p(t_k+1) = x(t_k) + v(t_k) * deltaT;
 			p_state[0] = m_state[0] + m_stateDot[0] * deltaT;
@@ -199,7 +199,7 @@ namespace AssemblyCSharp
 		}
 
 		// Computes one simulation step update
-		void FixedUpdate () {
+		public void updateParticle () {
 			if (!pinned) {
 				float deltaT = Time.deltaTime;
 				computeForces ();
