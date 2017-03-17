@@ -31,8 +31,6 @@ namespace AssemblyCSharp
 //				float what = 0984.0f;
 //				//Debug.Log ("Super breaking constraint");
 //				// TODO: WHY IS IT HERE. IT SHOULDN"T BE HERE.
-				// BUT IT ISN"T HERE.
-				// CRY
 //			}
 
 			float diffNorm = (currentDistance - restDistance) / currentDistance;
