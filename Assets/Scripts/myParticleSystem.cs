@@ -81,6 +81,11 @@ namespace AssemblyCSharp
 			GL.Vertex3(p1pos[0], p1pos[1], p1pos[2]);
 			GL.Vertex3(p2pos[0], p2pos[1], p2pos[2]);
 			GL.Vertex3(p3pos[0], p3pos[1], p3pos[2]);
+
+			// DEBUG: TODO: Hope this isn't instruding..
+			Debug.DrawLine (p1pos, p2pos);
+			Debug.DrawLine (p2pos, p3pos);
+			Debug.DrawLine (p3pos, p1pos);
 		}
 
 		// Similar to OnPostRender
@@ -170,7 +175,7 @@ namespace AssemblyCSharp
 
 			// Pin top two corners
 			getParticle(0, 0).setPinned(true);
-			getParticle (particleWidth - 1, 0).setPinned(true);
+			getParticle (0, particleHeight - 1).setPinned(true);
 		}
 	
 
@@ -191,6 +196,7 @@ namespace AssemblyCSharp
 //					float brkpt = 590595.0f;
 //				}
 				particles [i].updateParticle ();
+
 			}
 
 //			float[] lst = getParticle (2, 2).getState ();
