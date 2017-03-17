@@ -31,6 +31,8 @@ namespace AssemblyCSharp
 		Vector3 getTriangleNormal(myParticle p1, myParticle p2, myParticle p3) {
 			Vector3 v12 = p2.getPos () - p1.getPos ();
 			Vector3 v13 = p3.getPos () - p1.getPos ();
+			v12.Normalize ();
+			v13.Normalize ();
 
 			return Vector3.Cross (v12, v13);
 		}
@@ -115,7 +117,7 @@ namespace AssemblyCSharp
 
 		void Start () {
 			if (!material) {
-				Debug.Log ("here");
+				// Debug.Log ("here");
 				material = new Material (Shader.Find ("Diffuse"));
 			}
 
@@ -142,7 +144,7 @@ namespace AssemblyCSharp
 					Vector3 position = new Vector3 (width * (i / (float) (particleWidth - 1)),
 						-height * (j / (float) (particleHeight - 1)),
 						                   0.0f);
-					Debug.Log ("PARTICLE: " + "(" + i + ", " + j + "): " + position);
+					// Debug.Log ("PARTICLE: " + "(" + i + ", " + j + "): " + position);
 					particles.Add(new myParticle (position));
 				}
 			}
@@ -150,10 +152,8 @@ namespace AssemblyCSharp
 			// Create all of the constraints
 			// Neighbors
 			// A -  B
-			// |
+			// |  X
 			// C    D
-
-
 			for (int i = 0; i < particleWidth; i++) {
 				for (int j = 0; j < particleHeight; j++) {
 					if (i < particleWidth - 1) {

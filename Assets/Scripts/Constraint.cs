@@ -37,8 +37,14 @@ namespace AssemblyCSharp
 
 			// Add force to satisfy the constraint
 			// TODO: Damping if necessary. Is this too much?
-			p1.offsetPos (diff * 0.5f * diffNorm);
-			p2.offsetPos (-diff * 0.5f * diffNorm);
+			if (p1.isPinned ()) {
+				p2.offsetPos (-diff * diffNorm);
+			} else if (p2.isPinned ()) {
+				p1.offsetPos (diff * diffNorm);
+			} else {
+				p1.offsetPos (diff * 0.5f * diffNorm);
+				p2.offsetPos (-diff * 0.5f * diffNorm);
+			}
 		}
 
 

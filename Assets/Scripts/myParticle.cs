@@ -83,7 +83,11 @@ namespace AssemblyCSharp
 
 		public void offsetPos(Vector3 offset) {
 			if (!pinned) {
+				//Debug.Log ("Original: " + m_pos);
+
 				m_pos += offset;
+
+				//Debug.Log ("Offseted Position:" + m_pos);
 				m_state [0] = m_pos.x;
 				m_state [1] = m_pos.y;
 				m_state [2] = m_pos.z;
