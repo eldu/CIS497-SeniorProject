@@ -18,8 +18,8 @@ namespace AssemblyCSharp
 		List<myParticle> particles;
 		List<Constraint> constraints;
 
-		myParticle getParticle(int x, int y) {
-			return particles [y * particleWidth + x];
+		myParticle getParticle(int i, int j) {
+			return particles [j * particleWidth + i];
 		}
 
 		public void makeConstraint(myParticle p1, myParticle p2) {
@@ -86,6 +86,8 @@ namespace AssemblyCSharp
 			Debug.DrawLine (p1pos, p2pos);
 			Debug.DrawLine (p2pos, p3pos);
 			Debug.DrawLine (p3pos, p1pos);
+
+			Debug.Log ("Triangle: " + p1pos + " " + p2pos + " " + p3pos);
 		}
 
 		// Similar to OnPostRender
@@ -93,6 +95,8 @@ namespace AssemblyCSharp
 		// OnPostRender: https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnPostRender.html
 		// Draws after the camera has finished rendering the scene
 		void OnRenderObject() {
+			Debug.Log ("START");
+
 			material.SetPass(0);
 
 			GL.PushMatrix();
@@ -106,8 +110,11 @@ namespace AssemblyCSharp
 				}
 			}
 
+
 			GL.End();
 			GL.PopMatrix();
+
+			Debug.Log ("END");
 		}
 
 		void Start () {
@@ -134,11 +141,12 @@ namespace AssemblyCSharp
 			constraints = new List<Constraint>();
 
 			// Create all the particles
-			for (int i = 0; i < particleWidth; i++) {
-				for (int j = 0; j < particleHeight; j++) {
-					Vector3 position = new Vector3 (width * (i / (float)particleWidth),
-						                   -height * (j / (float)particleHeight),
+			for (int j = 0; j < particleHeight; j++) {
+				for (int i = 0; i < particleWidth; i++) {
+					Vector3 position = new Vector3 (width * (i / (float) (particleWidth - 1)),
+						-height * (j / (float) (particleHeight - 1)),
 						                   0.0f);
+					Debug.Log ("PARTICLE: " + "(" + i + ", " + j + "): " + position);
 					particles.Add(new myParticle (position));
 				}
 			}
@@ -191,29 +199,25 @@ namespace AssemblyCSharp
 //			}
 
 			// Secondary Constraints
-			// TODO: Clean this up
-			for (int i = 0; i < particleWidth - 1; i++) {
-				for (int j = 0; j < particleHeight - 1; j++) {
-					if (i < particleWidth - 2) {
-						makeConstraint (getParticle (i, j), getParticle (i + 2, j));
-					}
-					if (j < particleHeight - 2) {
-						makeConstraint (getParticle (i, j), getParticle (i, j + 2));
-					}
-					if (i < particleWidth - 2 && j < particleHeight - 2) {
-						makeConstraint (getParticle (i, j), getParticle (i + 2, j + 2));
-						makeConstraint (getParticle (i + 2, j), getParticle (i, j + 2));
-					}
-				}
-			}
+			// TODO: Why?
+//			for (int i = 0; i < particleWidth - 1; i++) {
+//				for (int j = 0; j < particleHeight - 1; j++) {
+//					if (i < particleWidth - 2) {
+//						makeConstraint (getParticle (i, j), getParticle (i + 2, j));
+//					}
+//					if (j < particleHeight - 2) {
+//						makeConstraint (getParticle (i, j), getParticle (i, j + 2));
+//					}
+//					if (i < particleWidth - 2 && j < particleHeight - 2) {
+//						makeConstraint (getParticle (i, j), getParticle (i + 2, j + 2));
+//						makeConstraint (getParticle (i + 2, j), getParticle (i, j + 2));
+//					}
+//				}
+//			}
 
 			// Pin top two corners
 			getParticle(0, 0).setPinned(true);
-//			getParticle (0, 1).setPinned (true);
-//			getParticle (1, 0).setPinned (true);
-//			getParticle (0, particleHeight - 1).setPinned (true);
-//			getParticle (1, particleHeight - 2).setPinned (true);
-			getParticle (0, particleHeight - 1).setPinned (true);
+			getParticle (particleWidth - 1, 0).setPinned (true);
 		}
 	
 

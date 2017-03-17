@@ -169,7 +169,7 @@ namespace AssemblyCSharp
 
 			// Add default force gravity
 			addForce (m_mass * m_gravity);
-			addForce (m_wind);
+			// addForce (m_wind);
 			addForce (m_constraint);
 
 			// Reset wind and constraint forces
@@ -264,8 +264,10 @@ namespace AssemblyCSharp
 			Vector3 p12 = p2.getPos() - p1.getPos();
 			float currentDistance = getlength();
 
-			if (currentDistance > restDistance + 0.0001f || currentDistance < restDistance - 0.0001f) {
+			if (currentDistance > restDistance + 1.0f) {
 				float what = 0984.0f;
+				//Debug.Log ("Super breaking constraint");
+				// TODO: WHY IS IT HERE. IT SHOULDN"T BE HERE.
 			}
 
 			Vector3 correction = p12 * (1.0f - restDistance / currentDistance) * 0.5f;
