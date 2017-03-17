@@ -7,42 +7,57 @@ namespace AssemblyCSharp
 {
 	public class myParticle
 	{
-		// List of neighbors
-		List<myParticle> neighbors;
-
 		// Determines if this is fixed
-		bool pinned;
+		private bool pinned;
 
-		int m_dim;
+		private int m_dim;
 
 		// State Vector
-		float[] m_state;
+		private float[] m_state;
 
 		// Derivative of the state vector
-		float[] m_stateDot; 
+		private float[] m_stateDot; 
 
 		// One simulation step
-		float m_deltaT; 
+		private float m_deltaT; 
 
-		float m_mass;
-		Vector3 m_pos;
-		Vector3 m_vel;
-		Vector3 m_gravity;
+		private float m_mass = 1.0f;
+		private Vector3 m_pos;
+		private Vector3 m_vel;
+		private Vector3 m_gravity;
 
-		public myParticle() {
+		public myParticle(Vector3 position) {
 			m_dim = 12;
-
-			m_mass = 1.0f;
-			setMass (m_mass);
-
 			m_gravity = new Vector3 (0.0f, -9.8f, 0.0f);
 
 			m_state = new float[12];
+			m_state [0] = position.x;
+			m_state [1] = position.y;
+			m_state [2] = position.z;
+			m_state [3] = 0.0f;
+			m_state [4] = 0.0f;
+			m_state [5] = 0.0f;
+			m_state [6] = 0.0f;
+			m_state [7] = 0.0f;
+			m_state [8] = 0.0f;
+			m_state [9] = 0.0f;
+			m_state [10] = 0.0f;
+			m_state [11] = 0.0f;
+
+			m_pos = new Vector3 (position.x, position.y, position.z);
+			m_vel = new Vector3 (0.0f, 0.0f, 0.0f);
+
 			m_stateDot = new float[12];
+
+			setMass (m_mass);
 		}
 
 		public myParticle (myParticleSystem parent)
 		{
+		}
+
+		public void setPinned(bool b) {
+			pinned = b;
 		}
 
 		// Set the particle state vector
@@ -74,9 +89,9 @@ namespace AssemblyCSharp
 		}
 
 		// Sets the mass
-		public void setMass(float mass) {
-			m_state[9] = mass;
-			m_mass = mass;
+		public void setMass(float _mass) {
+			m_state[9] = _mass;
+			m_mass = _mass;
 		}
 
 		// Gets the mass
@@ -208,16 +223,20 @@ namespace AssemblyCSharp
 
 		// Current length of the constraint
 		public float getlength() {
-			Vector3.Magnitude(p2.getPos () - p1.getPos ());
+			return Vector3.Magnitude(p2.getPos () - p1.getPos ());
 		}
 
 		public void satisfy() {
 			// Vector from p1 to p2
 			Vector3 p12 = p2.getPos() - p1.getPos();
-			Vector3 currentDistance = getlength();
+			float currentDistance = getlength();
 
-			Vector3 correction = p12 * (1.0 - restDistance / currentDistance) * 0.5;
+			Vector3 correction = p12 * (1.0f - restDistance / currentDistance) * 0.5f;
 
+			// Add force to satisfy the constraint
+			// TODO: Damping if necessary. Is this too much?
+			p1.addForce (correction);
+			p2.addForce (correction);
 
 		}
 

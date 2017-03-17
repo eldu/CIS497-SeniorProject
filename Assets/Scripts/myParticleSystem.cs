@@ -4,9 +4,10 @@ using System.Collections.Generic;
 
 namespace AssemblyCSharp
 {
-	public class myParticleSystem
+	public class myParticleSystem : MonoBehaviour
 	{
-		
+
+		public Material material; // Simple Material
 		public int particleWidth = 5; // number of particles in width
 		public int particleHeight = 5; // number of particles in height
 		public float width = 5.0f;
@@ -20,7 +21,7 @@ namespace AssemblyCSharp
 		}
 
 		public void makeConstraint(myParticle p1, myParticle p2) {
-			constraints.Add (Constraint (p1, p2));
+			constraints.Add (new Constraint (p1, p2));
 		}
 
 		// Not normalized
@@ -41,21 +42,113 @@ namespace AssemblyCSharp
 			p3.addForce (force);
 		}
 
-		void drawTriangle (Particle*p1, Particle*p2, Particle*p3) {
-			// TODO: Drawing triangle
+		void drawTriangle (myParticle p1, myParticle p2, myParticle p3) {
+			// Drawing triangle
+			// Reference: https://docs.unity3d.com/ScriptReference/GL.TRIANGLES.html
+
+			Vector3 p1pos = p1.getPos ();
+			Vector3 p2pos = p2.getPos ();
+			Vector3 p3pos = p3.getPos ();
+
+			Debug.Log ("Triangle: " + p1pos.ToString () + " " + p2pos.ToString () + " " + p3pos.ToString ());
+
+//			GL.PushMatrix();
+//			material.SetPass(0);
+//			GL.LoadOrtho();
+//			GL.Begin(GL.TRIANGLES);
+			GL.Vertex3(p1pos[0], p1pos[1], p1pos[2]);
+			GL.Vertex3(p2pos[0], p2pos[1], p2pos[2]);
+			GL.Vertex3(p3pos[0], p3pos[1], p3pos[2]);
+//			GL.End();
+//			GL.PopMatrix();
 		}
 
-		public myParticleSystem () {
+		void OnRenderObject() {
+			material.SetPass(0);
+
+			GL.PushMatrix();
+			GL.MultMatrix (transform.localToWorldMatrix);
+			GL.Begin(GL.TRIANGLES);
+
+//			GL.Vertex3(0, 0, 0);
+//			GL.Vertex3(0, 1, 0);
+//			GL.Vertex3(1, 1, 0);
+
+			for (int i = 0; i < particleWidth - 1; i++) {
+				for (int j = 0; j < particleHeight - 1; j++) {
+					Vector3 p1pos = getParticle(i, j).getPos ();
+					Vector3 p2pos = getParticle(i + 1, j).getPos ();
+					Vector3 p3pos = getParticle(i, j + 1).getPos ();
+
+//					GL.Vertex3(p1pos[0], p1pos[1], p1pos[2]);
+//					GL.Vertex3(p2pos[0], p2pos[1], p2pos[2]);
+//					GL.Vertex3(p3pos[0], p3pos[1], p3pos[2]);
+//
+//					Debug.Log ("Triangle: " + p1pos.ToString () + " " + p2pos.ToString () + " " + p3pos.ToString ());
+//
+
+					drawTriangle (getParticle (i, j), getParticle (i + 1, j), getParticle (i, j + 1));
+					drawTriangle (getParticle (i + 1, j), getParticle (i + 1, j + 1), getParticle (i, j + 1));
+				}
+			}
+
+			GL.End();
+			GL.PopMatrix();
+		}
+
+		void Start () {
+			if (!material) {
+				material = new Material (Shader.Find ("Diffuse"));
+			}
+
+			particles = new List<myParticle>();
+			constraints = new List<Constraint>();
+
 			// Create all the particles
 			for (int i = 0; i < particleWidth; i++) {
 				for (int j = 0; j < particleHeight; j++) {
-					int idx = j * particleHeight + i;
-					Vector3 position = Vector3 (width * (i / (float)particleWidth),
+					Vector3 position = new Vector3 (width * (i / (float)particleWidth),
 						                   -height * (j / (float)particleHeight),
-						                   0.0);
-					particles[idx] = myParticle(
+						                   0.0f);
+					particles.Add(new myParticle (position));
 				}
 			}
+
+			// Create all of the constraints
+			// Neighbors
+			// A -  B
+			// |
+			// C    D
+			for (int i = 0; i < particleWidth - 1; i++) {
+				for (int j = 0; j < particleHeight - 1; j++) {
+					// A - B
+					makeConstraint (getParticle (i, j), getParticle (i + 1, j));
+					// A - C
+					makeConstraint (getParticle (i, j), getParticle (i, j + 1));
+					// A - D
+					makeConstraint (getParticle (i, j), getParticle (i + 1, j + 1));
+					// B - C
+					makeConstraint (getParticle (i + 1, j), getParticle(i, j + 1));
+				}
+			}
+
+			// Bottom Row
+			for (int i = 0; i < particleWidth - 1; i++) {
+				makeConstraint (getParticle (i, particleHeight - 1), 
+					getParticle (i + 1, particleHeight - 1));
+			}
+
+			// Right most
+			for (int j = 0; j < particleHeight - 1; j++) {
+				makeConstraint (getParticle(particleWidth - 1, j),
+					getParticle(particleWidth - 1, j + 1));
+			}
+
+			// Pin top two corners
+			getParticle(0, 0).setPinned(true);
+			getParticle (particleHeight - 1, 0).setPinned(true);
+
+			//drawCloth ();
 		}
 	}
 }
