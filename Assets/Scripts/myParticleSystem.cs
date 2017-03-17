@@ -33,6 +33,16 @@ namespace AssemblyCSharp
 			return Vector3.Cross (v12, v13);
 		}
 
+		// Just gets a normalized normal from the triangle points
+		Vector3 getNormal(Vector3 p1, Vector3 p2, Vector3 p3) {
+			Vector3 v12 = p2 - p1;
+			Vector3 v13 = p3 - p1;
+			Vector3 normal = Vector3.Cross (v12, v13);
+			normal.Normalize ();
+		
+			return normal;
+		}
+
 		void wind(myParticle p1, myParticle p2, myParticle p3, Vector3 windDir) {
 			Vector3 normal = getTriangleNormal (p1, p2, p3);
 			Vector3 normalDir = Vector3.Normalize (normal);
@@ -51,7 +61,9 @@ namespace AssemblyCSharp
 			Vector3 p3pos = p3.getPos ();
 
 			// Debug.Log ("Triangle: " + p1pos.ToString () + " " + p2pos.ToString () + " " + p3pos.ToString ());
-
+			Vector3 normal = getTriangleNormal (p1, p2, p3);
+			normal.Normalize ();
+			GL.Color(new Color(normal.x, normal.y, normal.z, 1));
 			GL.Vertex3(p1pos[0], p1pos[1], p1pos[2]);
 			GL.Vertex3(p2pos[0], p2pos[1], p2pos[2]);
 			GL.Vertex3(p3pos[0], p3pos[1], p3pos[2]);
@@ -149,8 +161,10 @@ namespace AssemblyCSharp
 			// Pin top two corners
 			getParticle(0, 0).setPinned(true);
 			getParticle (particleHeight - 1, 0).setPinned(true);
-
-			//drawCloth ();
+		}
+	
+		void fixedUpdate() {
+			
 		}
 	}
 }
