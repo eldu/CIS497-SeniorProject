@@ -12,7 +12,7 @@ namespace AssemblyCSharp
 		public int particleHeight = 5; // number of particles in height
 		public float width = 5.0f;
 		public float height = 5.0f;
-		public int iterations = 10;
+		public int iterations = 20;
 		public Vector3 windDirection = new Vector3 (0.5f, 0.0f, 0.2f);
 
 		List<myParticle> particles;
@@ -148,30 +148,47 @@ namespace AssemblyCSharp
 			// A -  B
 			// |
 			// C    D
-			for (int i = 0; i < particleWidth - 1; i++) {
-				for (int j = 0; j < particleHeight - 1; j++) {
-					// A - B
-					makeConstraint (getParticle (i, j), getParticle (i + 1, j));
-					// A - C
-					makeConstraint (getParticle (i, j), getParticle (i, j + 1));
-					// A - D
-					makeConstraint (getParticle (i, j), getParticle (i + 1, j + 1));
-					// B - C
-					makeConstraint (getParticle (i + 1, j), getParticle(i, j + 1));
+
+
+			for (int i = 0; i < particleWidth; i++) {
+				for (int j = 0; j < particleHeight; j++) {
+					if (i < particleWidth - 1) {
+						makeConstraint (getParticle (i, j), getParticle (i + 1, j));
+					}
+					if (j < particleHeight - 1) {
+						makeConstraint (getParticle (i, j), getParticle (i, j + 1));
+					}
+					if (i < particleWidth - 1 && j < particleHeight - 1) {
+						makeConstraint (getParticle (i, j), getParticle (i + 1, j + 1));
+						makeConstraint (getParticle (i + 1, j), getParticle (i, j + 1));
+					}
 				}
 			}
 
-			// Bottom Row
-			for (int i = 0; i < particleWidth - 1; i++) {
-				makeConstraint (getParticle (i, particleHeight - 1), 
-					getParticle (i + 1, particleHeight - 1));
-			}
+//			for (int i = 0; i < particleWidth - 1; i++) {
+//				for (int j = 0; j < particleHeight - 1; j++) {
+//					// A - B
+//					makeConstraint (getParticle (i, j), getParticle (i + 1, j));
+//					// A - C
+//					makeConstraint (getParticle (i, j), getParticle (i, j + 1));
+//					// A - D
+//					makeConstraint (getParticle (i, j), getParticle (i + 1, j + 1));
+//					// B - C
+//					makeConstraint (getParticle (i + 1, j), getParticle(i, j + 1));
+//				}
+//			}
 
-			// Right most
-			for (int j = 0; j < particleHeight - 1; j++) {
-				makeConstraint (getParticle(particleWidth - 1, j),
-					getParticle(particleWidth - 1, j + 1));
-			}
+//			// Bottom Row
+//			for (int i = 0; i < particleWidth - 1; i++) {
+//				makeConstraint (getParticle (i, particleHeight - 1), 
+//					getParticle (i + 1, particleHeight - 1));
+//			}
+//
+//			// Right most
+//			for (int j = 0; j < particleHeight - 1; j++) {
+//				makeConstraint (getParticle(particleWidth - 1, j),
+//					getParticle(particleWidth - 1, j + 1));
+//			}
 
 			// Secondary Constraints
 			// TODO: Clean this up
@@ -192,7 +209,11 @@ namespace AssemblyCSharp
 
 			// Pin top two corners
 			getParticle(0, 0).setPinned(true);
-			getParticle (0, particleHeight - 1).setPinned(true);
+//			getParticle (0, 1).setPinned (true);
+//			getParticle (1, 0).setPinned (true);
+//			getParticle (0, particleHeight - 1).setPinned (true);
+//			getParticle (1, particleHeight - 2).setPinned (true);
+			getParticle (0, particleHeight - 1).setPinned (true);
 		}
 	
 
@@ -205,21 +226,10 @@ namespace AssemblyCSharp
 					constraints [j].satisfy ();
 				}
 			}
-
-			// int idx = 2 * particleWidth + 2;
 				
 			for (int i = 0; i < particles.Count ; i++) {
-//				if (i == idx) {
-//					float brkpt = 590595.0f;
-//				}
 				particles [i].updateParticle ();
-
 			}
-
-//			float[] lst = getParticle (2, 2).getState ();
-//			Debug.Log ("p22: " + lst[0] + ", " + lst[1] + ", " + lst[2] + ", "
-//				+ lst[3] + ", " + lst[4] + ", " + lst[5] + ", "
-//				+ lst[6] + ", " + lst[7] + ", " + lst[8]);
 		}
 	}
 }

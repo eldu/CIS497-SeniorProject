@@ -235,6 +235,10 @@ namespace AssemblyCSharp
 				updateState (deltaT);
 			}
 		}
+
+		public bool isPinned() {
+			return pinned;
+		}
 	
 	}
 
@@ -270,9 +274,21 @@ namespace AssemblyCSharp
 			// TODO: Damping if necessary. Is this too much?
 			//p1.addConstraintForce (correction);
 			//p2.addConstraintForce (-correction);
-			p1.offsetPos (correction);
-			p2.offsetPos (-correction);
+//			if (p1.isPinned()) {
+//				p2.offsetPos (-correction * 2.0f);
+//			} else if (p2.isPinned()) {
+//				p1.offsetPos (correction * 2.0f);
+//			} else {
+				p1.offsetPos (correction);
+				p2.offsetPos (-correction);
+//			}
 
+//			p12 = p2.getPos() - p1.getPos();
+//			currentDistance = getlength();
+//			if (currentDistance > restDistance + 0.0001f || currentDistance < restDistance - 0.0001f) {
+//				float what = 0984.0f;
+//
+//			}
 
 
 		}
