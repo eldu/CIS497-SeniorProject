@@ -25,10 +25,12 @@ namespace AssemblyCSharp
 		private Vector3 m_pos;
 		private Vector3 m_vel;
 		private Vector3 m_gravity;
+		private Vector3 m_wind;
 
 		public myParticle(Vector3 position) {
 			m_dim = 12;
 			m_gravity = new Vector3 (0.0f, -9.8f, 0.0f);
+			m_wind = new Vector3 (0.0f, 0.0f, 0.0f);
 
 			m_state = new float[12];
 			m_state [0] = position.x;
@@ -37,10 +39,10 @@ namespace AssemblyCSharp
 			m_state [3] = 0.0f;
 			m_state [4] = 0.0f;
 			m_state [5] = 0.0f;
-			m_state [6] = 0.0f;
-			m_state [7] = 0.0f;
-			m_state [8] = 0.0f;
-			m_state [9] = 0.0f;
+			m_state [6] = m_mass * m_gravity[0];
+			m_state [7] = m_mass * m_gravity[1];
+			m_state [8] = m_mass * m_gravity[2];
+			m_state [9] = m_mass;
 			m_state [10] = 0.0f;
 			m_state [11] = 0.0f;
 
@@ -102,7 +104,10 @@ namespace AssemblyCSharp
 		// Updates the particle state
 		// Uses RK2
 		public void updateState(float deltaT) {
-			// Add your code here
+			// COmpute Dynamics
+			computeDynamics (m_state, m_stateDot, deltaT);
+
+			// RK2 Integration
 			// Predicted state at t_k+1
 			float[] p_state = new float[12];
 
@@ -154,6 +159,11 @@ namespace AssemblyCSharp
 
 			// Add default force gravity
 			addForce (m_mass * m_gravity);
+			addForce (m_wind);
+		}
+
+		public void addWindForce(Vector3 force) {
+			m_wind = force;
 		}
 
 		//given the state compute stateDot based on the dynamics of the particle

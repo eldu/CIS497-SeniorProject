@@ -13,6 +13,7 @@ namespace AssemblyCSharp
 		public float width = 5.0f;
 		public float height = 5.0f;
 		public int iterations = 10;
+		public Vector3 windDirection = new Vector3 (0.5f, 0.0f, 0.2f);
 
 		List<myParticle> particles;
 		List<Constraint> constraints;
@@ -49,17 +50,17 @@ namespace AssemblyCSharp
 			Vector3 normal = getTriangleNormal (p1, p2, p3);
 			Vector3 normalDir = Vector3.Normalize (normal);
 			Vector3 force = normal * Vector3.Dot (normalDir, windDir); // based on area of the triangle as well
-			p1.addForce (force);
-			p2.addForce (force);
-			p3.addForce (force);
+			p1.addWindForce (force);
+			p2.addWindForce (force);
+			p3.addWindForce (force);
 		}
 
 		// Add wind force to the entire cloth
 		void addWindForce(Vector3 direction) {
 			for (int i = 0; i < particleWidth - 1; i++) {
 				for (int j = 0; j < particleHeight - 1; j++) {
-					addWindToTriangle (getParticle (i + 1, j), getParticle (i, j), getParticle (i, j + 1), direction);
-					addWindToTriangle (getParticle (i + 1, j + 1), getParticle (i + 1, j), getParticle (i, j + 1), direction);
+					addWindToTriangle (getParticle (i, j), getParticle (i + 1, j), getParticle (i, j + 1), direction);
+					addWindToTriangle (getParticle (i + 1, j), getParticle (i + 1, j + 1), getParticle (i, j + 1), direction);
 				}
 			}
 		}
@@ -169,23 +170,33 @@ namespace AssemblyCSharp
 
 			// Pin top two corners
 			getParticle(0, 0).setPinned(true);
-			getParticle (particleHeight - 1, 0).setPinned(true);
+			getParticle (particleWidth - 1, 0).setPinned(true);
 		}
 	
-		Vector3 windDirection = new Vector3 (0.5f, 0.0f, 0.2f);
+
 		void FixedUpdate() {
 			addWindForce (windDirection);
 
-			// Satisfy the Contraints
+			 //Satisfy the Contraints
 			for (int i = 0; i < iterations; i++) {
 				for (int j = 0; j < constraints.Count; j++) {
 					constraints [j].satisfy ();
 				}
 			}
+
+			// int idx = 2 * particleWidth + 2;
 				
 			for (int i = 0; i < particles.Count ; i++) {
+//				if (i == idx) {
+//					float brkpt = 590595.0f;
+//				}
 				particles [i].updateParticle ();
 			}
+
+//			float[] lst = getParticle (2, 2).getState ();
+//			Debug.Log ("p22: " + lst[0] + ", " + lst[1] + ", " + lst[2] + ", "
+//				+ lst[3] + ", " + lst[4] + ", " + lst[5] + ", "
+//				+ lst[6] + ", " + lst[7] + ", " + lst[8]);
 		}
 	}
 }
