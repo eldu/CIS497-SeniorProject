@@ -76,7 +76,7 @@ namespace AssemblyCSharp
 
 			// Debug.Log ("Triangle: " + p1pos.ToString () + " " + p2pos.ToString () + " " + p3pos.ToString ());
 			Vector3 normal = getTriangleNormal (p1, p2, p3);
-			normal.Normalize ();
+			// normal.Normalize ();
 			GL.Color(new Color(normal.x, normal.y, normal.z, 1));
 			GL.Vertex3(p1pos[0], p1pos[1], p1pos[2]);
 			GL.Vertex3(p2pos[0], p2pos[1], p2pos[2]);
@@ -87,7 +87,7 @@ namespace AssemblyCSharp
 			Debug.DrawLine (p2pos, p3pos);
 			Debug.DrawLine (p3pos, p1pos);
 
-			Debug.Log ("Triangle: " + p1pos + " " + p2pos + " " + p3pos);
+			// Debug.Log ("Triangle: " + p1pos + " " + p2pos + " " + p3pos);
 		}
 
 		// Similar to OnPostRender
@@ -95,8 +95,6 @@ namespace AssemblyCSharp
 		// OnPostRender: https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnPostRender.html
 		// Draws after the camera has finished rendering the scene
 		void OnRenderObject() {
-			Debug.Log ("START");
-
 			material.SetPass(0);
 
 			GL.PushMatrix();
@@ -113,8 +111,6 @@ namespace AssemblyCSharp
 
 			GL.End();
 			GL.PopMatrix();
-
-			Debug.Log ("END");
 		}
 
 		void Start () {
