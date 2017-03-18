@@ -219,16 +219,16 @@ namespace AssemblyCSharp
 
 		void FixedUpdate() {
 			addWindForce (windDirection);
+				
+			for (int i = 0; i < particles.Count ; i++) {
+				particles [i].updateParticle ();
+			}
 
-			 //Satisfy the Contraints
+			//Satisfy the Contraints
 			for (int i = 0; i < iterations; i++) {
 				for (int j = 0; j < constraints.Count; j++) {
 					constraints [j].satisfy ();
 				}
-			}
-				
-			for (int i = 0; i < particles.Count ; i++) {
-				particles [i].updateParticle ();
 			}
 		}
 	}
