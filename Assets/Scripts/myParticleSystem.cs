@@ -154,62 +154,30 @@ namespace AssemblyCSharp
 			// A -  B
 			// |  X
 			// C    D
-			for (int i = 0; i < particleWidth; i++) {
-				for (int j = 0; j < particleHeight; j++) {
-					if (i < particleWidth - 1) {
-						makeConstraint (getParticle (i, j), getParticle (i + 1, j));
-					}
-					if (j < particleHeight - 1) {
-						makeConstraint (getParticle (i, j), getParticle (i, j + 1));
-					}
-					if (i < particleWidth - 1 && j < particleHeight - 1) {
-						makeConstraint (getParticle (i, j), getParticle (i + 1, j + 1));
-						makeConstraint (getParticle (i + 1, j), getParticle (i, j + 1));
-					}
+			for (int i = 0; i < particleWidth - 1; i++) {
+				for (int j = 0; j < particleHeight - 1; j++) {
+					// A - B
+					makeConstraint (getParticle (i, j), getParticle (i + 1, j));
+					// A - C
+					makeConstraint (getParticle (i, j), getParticle (i, j + 1));
+					// A - D
+					makeConstraint (getParticle (i, j), getParticle (i + 1, j + 1));
+					// B - C
+					makeConstraint (getParticle (i + 1, j), getParticle(i, j + 1));
 				}
 			}
 
-//			for (int i = 0; i < particleWidth - 1; i++) {
-//				for (int j = 0; j < particleHeight - 1; j++) {
-//					// A - B
-//					makeConstraint (getParticle (i, j), getParticle (i + 1, j));
-//					// A - C
-//					makeConstraint (getParticle (i, j), getParticle (i, j + 1));
-//					// A - D
-//					makeConstraint (getParticle (i, j), getParticle (i + 1, j + 1));
-//					// B - C
-//					makeConstraint (getParticle (i + 1, j), getParticle(i, j + 1));
-//				}
-//			}
+			// Bottom Row
+			for (int i = 0; i < particleWidth - 1; i++) {
+				makeConstraint (getParticle (i, particleHeight - 1), 
+					getParticle (i + 1, particleHeight - 1));
+			}
 
-//			// Bottom Row
-//			for (int i = 0; i < particleWidth - 1; i++) {
-//				makeConstraint (getParticle (i, particleHeight - 1), 
-//					getParticle (i + 1, particleHeight - 1));
-//			}
-//
-//			// Right most
-//			for (int j = 0; j < particleHeight - 1; j++) {
-//				makeConstraint (getParticle(particleWidth - 1, j),
-//					getParticle(particleWidth - 1, j + 1));
-//			}
-
-			// Secondary Constraints
-			// TODO: Why?
-//			for (int i = 0; i < particleWidth - 1; i++) {
-//				for (int j = 0; j < particleHeight - 1; j++) {
-//					if (i < particleWidth - 2) {
-//						makeConstraint (getParticle (i, j), getParticle (i + 2, j));
-//					}
-//					if (j < particleHeight - 2) {
-//						makeConstraint (getParticle (i, j), getParticle (i, j + 2));
-//					}
-//					if (i < particleWidth - 2 && j < particleHeight - 2) {
-//						makeConstraint (getParticle (i, j), getParticle (i + 2, j + 2));
-//						makeConstraint (getParticle (i + 2, j), getParticle (i, j + 2));
-//					}
-//				}
-//			}
+			// Right most
+			for (int j = 0; j < particleHeight - 1; j++) {
+				makeConstraint (getParticle(particleWidth - 1, j),
+					getParticle(particleWidth - 1, j + 1));
+			}
 
 			// Pin top two corners
 			getParticle(0, 0).setPinned(true);

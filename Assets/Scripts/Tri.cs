@@ -28,15 +28,15 @@ public class Tri : MonoBehaviour {
 		// simple colored things. In this case, we just want to use
 		// a blend mode that inverts destination colors.			
 		var shader = Shader.Find ("Hidden/Internal-Colored");
-		material = new Material (shader);
-		material.hideFlags = HideFlags.HideAndDontSave;
-		// Set blend mode to invert destination colors.
-		material.SetInt ("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusDstColor);
-		material.SetInt ("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
-		// Turn off backface culling, depth writes, depth test.
-		material.SetInt ("_Cull", (int)UnityEngine.Rendering.CullMode.Off);
-		material.SetInt ("_ZWrite", 0);
-		material.SetInt ("_ZTest", (int)UnityEngine.Rendering.CompareFunction.Always);
+//		material = new Material (shader);
+//		material.hideFlags = HideFlags.HideAndDontSave;
+//		// Set blend mode to invert destination colors.
+//		material.SetInt ("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusDstColor);
+//		material.SetInt ("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+//		// Turn off backface culling, depth writes, depth test.
+//		material.SetInt ("_Cull", (int)UnityEngine.Rendering.CullMode.Off);
+//		material.SetInt ("_ZWrite", 0);
+//		material.SetInt ("_ZTest", (int)UnityEngine.Rendering.CompareFunction.Always);
 	}
 	
 	// Update is called once per frame
