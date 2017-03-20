@@ -2,10 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 
+
+
 namespace AssemblyCSharp
 {
 	public class myParticleSystem : MonoBehaviour
 	{
+		private Mesh cloth;
 
 		public Material material; // Simple Material
 		public int particleWidth = 5; // number of particles in width
@@ -92,28 +95,28 @@ namespace AssemblyCSharp
 			// Debug.Log ("Triangle: " + p1pos + " " + p2pos + " " + p3pos);
 		}
 
-		// Similar to OnPostRender
-		// OnRenderObject: https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnRenderObject.html
-		// OnPostRender: https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnPostRender.html
-		// Draws after the camera has finished rendering the scene
-		void OnRenderObject() {
-			material.SetPass(0);
-
-			GL.PushMatrix();
-			GL.MultMatrix (transform.localToWorldMatrix);
-			GL.Begin(GL.TRIANGLES);
-
-			for (int i = 0; i < particleWidth - 1; i++) {
-				for (int j = 0; j < particleHeight - 1; j++) {
-					drawTriangle (getParticle (i, j), getParticle (i + 1, j), getParticle (i, j + 1));
-					drawTriangle (getParticle (i + 1, j), getParticle (i + 1, j + 1), getParticle (i, j + 1));
-				}
-			}
-
-
-			GL.End();
-			GL.PopMatrix();
-		}
+//		// Similar to OnPostRender
+//		// OnRenderObject: https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnRenderObject.html
+//		// OnPostRender: https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnPostRender.html
+//		// Draws after the camera has finished rendering the scene
+//		void OnRenderObject() {
+//			material.SetPass(0);
+//
+//			GL.PushMatrix();
+//			GL.MultMatrix (transform.localToWorldMatrix);
+//			GL.Begin(GL.TRIANGLES);
+//
+//			for (int i = 0; i < particleWidth - 1; i++) {
+//				for (int j = 0; j < particleHeight - 1; j++) {
+//					drawTriangle (getParticle (i, j), getParticle (i + 1, j), getParticle (i, j + 1));
+//					drawTriangle (getParticle (i + 1, j), getParticle (i + 1, j + 1), getParticle (i, j + 1));
+//				}
+//			}
+//
+//
+//			GL.End();
+//			GL.PopMatrix();
+//		}
 
 		void Start () {
 			if (!material) {
@@ -137,6 +140,10 @@ namespace AssemblyCSharp
 
 			particles = new List<myParticle>();
 			constraints = new List<Constraint>();
+
+			// Create a mesh
+
+
 
 			// Create all the particles
 			for (int j = 0; j < particleHeight; j++) {
