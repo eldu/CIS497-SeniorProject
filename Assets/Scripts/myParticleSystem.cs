@@ -8,7 +8,7 @@ namespace AssemblyCSharp
 {
 	public class myParticleSystem : MonoBehaviour
 	{
-		private Mesh cloth;
+		private Mesh mesh;
 
 		public Material material; // Simple Material
 		public int particleWidth = 5; // number of particles in width
@@ -142,6 +142,8 @@ namespace AssemblyCSharp
 			constraints = new List<Constraint>();
 
 			// Create a mesh
+			mesh = new Mesh();
+
 
 
 

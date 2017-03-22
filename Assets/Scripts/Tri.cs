@@ -15,7 +15,7 @@ public class Tri : MonoBehaviour {
 	public Vector3 p6;
 
 	private Vector3[] vert;
-	private Vector3[] tria;
+	private int[] tria;
 
 	// Use this for initialization
 	void Start () {
@@ -36,7 +36,7 @@ public class Tri : MonoBehaviour {
 		vert [4] = p5;
 		vert [5] = p6;
 
-		tria = new Vector3[6];
+		tria = new int[6];
 		tria [0] = 0;
 		tria [1] = 1;
 		tria [2] = 2;
@@ -48,7 +48,7 @@ public class Tri : MonoBehaviour {
 		Vector2[] uvs = new Vector2[tria.Length];
 
 		for (int i=0; i < uvs.Length; i++) {
-			uvs[i] = new Vector2(tria[i].x, tria[i].z);
+			uvs[i] = new Vector2(vert[i].x, vert[i].z);
 		}
 			
 		mesh.vertices = vert;
@@ -56,7 +56,8 @@ public class Tri : MonoBehaviour {
 		mesh.uv = uvs;
 
 		mesh.RecalculateNormals ();
-		mesh.Optimize ();
+
+		GetComponent<MeshFilter> ().mesh = mesh;
 	}
 	
 	// Update is called once per frame

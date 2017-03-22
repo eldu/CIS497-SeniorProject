@@ -243,6 +243,12 @@ namespace AssemblyCSharp
 		public bool isPinned() {
 			return pinned;
 		}
+
+
+//		void FixedUpdate() {
+//			updateParticle ();
+//
+//		}
 	
 	}
 }
