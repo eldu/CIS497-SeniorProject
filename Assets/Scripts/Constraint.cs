@@ -35,9 +35,8 @@ namespace AssemblyCSharp
 //				// Debug.Log(-delta * 0.5f * diff);
 //			}
 
-
-			p1.offsetPos (delta * 0.7f * diff);
-			p2.offsetPos (-delta * 0.7f * diff);
+			p1.offsetPos (delta * 0.5f * diff);
+			p2.offsetPos (-delta * 0.5f * diff);
 
 			// Faster, Approximate
 			//delta*=restLength*restLength/(delta*delta+restLength*restLength)-0.5;

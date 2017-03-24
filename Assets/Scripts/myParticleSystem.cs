@@ -19,7 +19,7 @@ namespace AssemblyCSharp
 		public int particleHeight = 5; // number of particles in height
 		public float width = 5.0f;
 		public float height = 5.0f;
-		public int iterations = 100;
+		public int iterations = 10;
 		public Vector3 windDirection = new Vector3 (0.5f, 0.0f, 0.2f);
 
 		private myParticle[] particles;
@@ -111,7 +111,7 @@ namespace AssemblyCSharp
 			}
 
 			// Create all of the constraints
-			// Neighbors
+			// Stretch Spring, Shear Springs
 			// A -  B
 			// |  X
 			// C    D
@@ -125,17 +125,6 @@ namespace AssemblyCSharp
 					makeConstraint (getParticle (i, j), getParticle (i + 1, j + 1));
 					// B - C
 					makeConstraint (getParticle (i + 1, j), getParticle(i, j + 1));
-
-
-//					Debug.Log ("Start Madness");
-//					Debug.Log (getParticle (i, j).getPos ());
-//					Debug.Log (getParticle (i + 1, j).getPos ());
-//					Debug.Log (getParticle (i + 1, j + 1).getPos ());
-//					Debug.Log (getParticle (i, j + 1).getPos ());
-//
-//					Debug.Log ("Stop madness");
-
-					float what = 5.6f;
 				}
 			}
 
@@ -151,10 +140,16 @@ namespace AssemblyCSharp
 					getParticle(particleWidth - 1, j + 1));
 			}
 
-			// Pin top two corners
-//			getParticle(0, 0).setPinned(true);
-//			getParticle (particleWidth - 1, 0).setPinned (true);
-
+			// Bend Springs
+			for(int i = 0; i <particleWidth; i++)
+			{
+				for(int j=0; j < particleHeight; j++)
+				{
+					if (i < particleWidth-2) makeConstraint(getParticle(i, j),getParticle(i + 2,j));
+					if (j<particleHeight-2) makeConstraint(getParticle(i, j),getParticle(i, j + 2));
+					if (i<particleWidth-2 && j<particleHeight-2) makeConstraint(getParticle(i, j),getParticle(i + 2,j + 2));
+					if (i<particleWidth-2 && j<particleHeight-2) makeConstraint(getParticle(i + 2, j),getParticle(i, j + 2));			}
+			}
 
 			// Create the triangles
 			idx = 0;
@@ -176,9 +171,6 @@ namespace AssemblyCSharp
 			GetComponent<MeshFilter> ().mesh = mesh;
 		}
 	
-
-
-
 		void FixedUpdate() {
 			addWindForce (windDirection);
 
@@ -196,24 +188,19 @@ namespace AssemblyCSharp
 					constraints [j].satisfy ();
 				}
 
-				vert [0] = topLeft;
+				// Pin, i swear this is maddening
+				vert [getParticleIdx(0, 0)] = topLeft;
 				vert [getParticleIdx(particleWidth - 1, 0)] = topRight;
 
 				getParticle (0, 0).setPos (topLeft);
 				getParticle (particleWidth - 1, 0).setPos (topRight);
-
 			}
-
 
 			for (int i = 0; i < particles.Length ; i++) {
 				vert[i] = particles [i].getPos();
 			}
 
 			GetComponent<MeshFilter> ().mesh.vertices = vert;
-		}
-
-		void OnPreRender() {
-			GL.wireframe = true;
 		}
 	}
 }

@@ -27,7 +27,7 @@ namespace AssemblyCSharp
 		private Vector3 m_vel;
 		private Vector3 m_gravity;
 		private Vector3 m_wind;
-		private Vector3 m_constraint; // Sum of forces from contraints
+		// private Vector3 m_constraint; // Sum of forces from contraints
 
 		public myParticle(Vector3 position) {
 			m_dim = 12;
@@ -55,11 +55,7 @@ namespace AssemblyCSharp
 
 			setMass (m_mass);
 		}
-
-//		public void setPinned(bool b) {
-//			pinned = b;
-//		}
-
+			
 		// Set the particle state vector
 		public void setState(float[] newState) {
 			for (int i = 0; i < m_dim; i++)
@@ -87,13 +83,11 @@ namespace AssemblyCSharp
 		}
 
 		public void offsetPos(Vector3 offset) {
-			// if (!pinned) {
-				m_pos += offset;
+			m_pos += offset;
 
-				m_state [0] = m_pos.x;
-				m_state [1] = m_pos.y;
-				m_state [2] = m_pos.z;
-			// }
+			m_state [0] = m_pos.x;
+			m_state [1] = m_pos.y;
+			m_state [2] = m_pos.z;
 		}
 
 		// Get the state vector
@@ -176,20 +170,20 @@ namespace AssemblyCSharp
 			// Add default force gravity
 			addForce (m_mass * m_gravity);
 			addForce (m_wind);
-			addForce (m_constraint);
+			// addForce (m_constraint);
 
 			// Reset wind and constraint forces
 			m_wind = new Vector3 ();
-			m_constraint = new Vector3 ();
+			// m_constraint = new Vector3 ();
 		}
 
 		public void addWindForce(Vector3 force) {
 			m_wind = force;
 		}
 
-		public void addConstraintForce (Vector3 force) {
-			m_constraint = force;
-		}
+//		public void addConstraintForce (Vector3 force) {
+//			m_constraint = force;
+//		}
 
 		//given the state compute stateDot based on the dynamics of the particle
 		// state: a vector containing the state of the particle in terms of its position, velocity, forces,
@@ -238,16 +232,10 @@ namespace AssemblyCSharp
 
 		// Computes one simulation step update
 		public void updateParticle () {
-			//if (!pinned) {
-				float deltaT = Time.deltaTime;
-				computeForces ();
-				updateState (deltaT);
-			//}
+			float deltaT = Time.deltaTime;
+			computeForces ();
+			updateState (deltaT);
 		}
-
-//		public bool isPinned() {
-//			return pinned;
-//		}
 	}
 }
 
