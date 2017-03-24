@@ -16,6 +16,9 @@ public class Tri : MonoBehaviour {
 
 	private Vector3[] vert;
 	private int[] tria;
+	private Mesh mesh;
+
+	private Mesh cloth;
 
 	// Use this for initialization
 	void Start () {
@@ -26,7 +29,7 @@ public class Tri : MonoBehaviour {
 		p5 = new Vector3 (2, 0, 0);
 		p6 = new Vector3 (2, 1, 0); 
 
-		Mesh mesh = new Mesh();
+		mesh = new Mesh();
 
 		vert = new Vector3[6];
 		vert [0] = p1;
@@ -52,17 +55,24 @@ public class Tri : MonoBehaviour {
 		}
 			
 		mesh.vertices = vert;
-		mesh.triangles = tria;
 		mesh.uv = uvs;
+		mesh.triangles = tria;
 
 		mesh.RecalculateNormals ();
+
+//		for (int i = 0; i < mesh.vertices.Length; i++) {
+//			Debug.Log (mesh.vertices [i]);
+//		}
 
 		GetComponent<MeshFilter> ().mesh = mesh;
 	}
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-
+		vert [0] += new Vector3 (0.1f, 0.0f, 0.0f);
+		GetComponent<MeshFilter> ().mesh.vertices = vert;
+		Debug.Log (GetComponent<MeshFilter> ().mesh.vertices[0]);
+		//Debug.Log (GetComponent<MeshFilter> ().mesh.vertices [0]);
 	}
 
 //	void OnRenderObject() {

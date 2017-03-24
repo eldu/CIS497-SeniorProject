@@ -8,6 +8,8 @@ namespace AssemblyCSharp
 {
 	public class myParticleSystem : MonoBehaviour
 	{
+		private Vector3[] vert;
+		private int[] tria;
 		private Mesh mesh;
 
 		public Material material; // Simple Material
@@ -18,11 +20,23 @@ namespace AssemblyCSharp
 		public int iterations = 20;
 		public Vector3 windDirection = new Vector3 (0.5f, 0.0f, 0.2f);
 
-		List<myParticle> particles;
+		private myParticle[] particles;
 		List<Constraint> constraints;
+
+		public Vector3[] getVertices() {
+			return vert;
+		}
+
+		int getParticleIdx(int i, int j) {
+			return j * particleWidth + i;
+		}
 
 		myParticle getParticle(int i, int j) {
 			return particles [j * particleWidth + i];
+		}
+
+		public void setVertex(int idx, Vector3 value) {
+			vert [idx] = value;
 		}
 
 		public void makeConstraint(myParticle p1, myParticle p2) {
@@ -70,30 +84,32 @@ namespace AssemblyCSharp
 			}
 		}
 
-		void drawTriangle (myParticle p1, myParticle p2, myParticle p3) {
-			// Drawing triangle
-			// Reference: https://docs.unity3d.com/ScriptReference/GL.TRIANGLES.html
-			// Use Tri.cs to doing smaller test cases with GL.Triangles
+//		void drawTriangle (myParticle p1, myParticle p2, myParticle p3) {
+//			// Drawing triangle
+//			// Reference: https://docs.unity3d.com/ScriptReference/GL.TRIANGLES.html
+//			// Use Tri.cs to doing smaller test cases with GL.Triangles
+//
+//			Vector3 p1pos = p1.getPos ();
+//			Vector3 p2pos = p2.getPos ();
+//			Vector3 p3pos = p3.getPos ();
+//
+//			// Debug.Log ("Triangle: " + p1pos.ToString () + " " + p2pos.ToString () + " " + p3pos.ToString ());
+//			Vector3 normal = getTriangleNormal (p1, p2, p3);
+//			// normal.Normalize ();
+//			GL.Color(new Color(normal.x, normal.y, normal.z, 1));
+//			GL.Vertex3(p1pos[0], p1pos[1], p1pos[2]);
+//			GL.Vertex3(p2pos[0], p2pos[1], p2pos[2]);
+//			GL.Vertex3(p3pos[0], p3pos[1], p3pos[2]);
+//
+//			// DEBUG: TODO: Hope this isn't instruding..
+//			Debug.DrawLine (p1pos, p2pos);
+//			Debug.DrawLine (p2pos, p3pos);
+//			Debug.DrawLine (p3pos, p1pos);
+//
+//			// Debug.Log ("Triangle: " + p1pos + " " + p2pos + " " + p3pos);
+//		}
 
-			Vector3 p1pos = p1.getPos ();
-			Vector3 p2pos = p2.getPos ();
-			Vector3 p3pos = p3.getPos ();
 
-			// Debug.Log ("Triangle: " + p1pos.ToString () + " " + p2pos.ToString () + " " + p3pos.ToString ());
-			Vector3 normal = getTriangleNormal (p1, p2, p3);
-			// normal.Normalize ();
-			GL.Color(new Color(normal.x, normal.y, normal.z, 1));
-			GL.Vertex3(p1pos[0], p1pos[1], p1pos[2]);
-			GL.Vertex3(p2pos[0], p2pos[1], p2pos[2]);
-			GL.Vertex3(p3pos[0], p3pos[1], p3pos[2]);
-
-			// DEBUG: TODO: Hope this isn't instruding..
-			Debug.DrawLine (p1pos, p2pos);
-			Debug.DrawLine (p2pos, p3pos);
-			Debug.DrawLine (p3pos, p1pos);
-
-			// Debug.Log ("Triangle: " + p1pos + " " + p2pos + " " + p3pos);
-		}
 
 //		// Similar to OnPostRender
 //		// OnRenderObject: https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnRenderObject.html
@@ -113,7 +129,6 @@ namespace AssemblyCSharp
 //				}
 //			}
 //
-//
 //			GL.End();
 //			GL.PopMatrix();
 //		}
@@ -124,37 +139,37 @@ namespace AssemblyCSharp
 				material = new Material (Shader.Find ("Diffuse"));
 			}
 
-			// Unity has a built-in shader that is useful for drawing
-			// simple colored things. In this case, we just want to use
-			// a blend mode that inverts destination colors.			
-			var shader = Shader.Find ("Hidden/Internal-Colored");
-			material = new Material (shader);
-			material.hideFlags = HideFlags.HideAndDontSave;
-			// Set blend mode to invert destination colors.
-			material.SetInt ("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusDstColor);
-			material.SetInt ("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
-			// Turn off backface culling, depth writes, depth test.
-			material.SetInt ("_Cull", (int)UnityEngine.Rendering.CullMode.Off);
-			material.SetInt ("_ZWrite", 0);
-			material.SetInt ("_ZTest", (int)UnityEngine.Rendering.CompareFunction.Always);
+//			// Unity has a built-in shader that is useful for drawing
+//			// simple colored things. In this case, we just want to use
+//			// a blend mode that inverts destination colors.			
+//			var shader = Shader.Find ("Hidden/Internal-Colored");
+//			material = new Material (shader);
+//			material.hideFlags = HideFlags.HideAndDontSave;
+//			// Set blend mode to invert destination colors.
+//			material.SetInt ("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusDstColor);
+//			material.SetInt ("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+//			// Turn off backface culling, depth writes, depth test.
+//			material.SetInt ("_Cull", (int)UnityEngine.Rendering.CullMode.Off);
+//			material.SetInt ("_ZWrite", 0);
+//			material.SetInt ("_ZTest", (int)UnityEngine.Rendering.CompareFunction.Always);
 
-			particles = new List<myParticle>();
+			particles = new myParticle[particleWidth * particleHeight];
 			constraints = new List<Constraint>();
-
+	
 			// Create a mesh
 			mesh = new Mesh();
-
-
-
+			vert = new Vector3[particleWidth * particleHeight];
+			tria = new int[(particleWidth - 1) * (particleHeight - 1) * 6];
 
 			// Create all the particles
+			int idx = 0;
 			for (int j = 0; j < particleHeight; j++) {
 				for (int i = 0; i < particleWidth; i++) {
 					Vector3 position = new Vector3 (width * (i / (float) (particleWidth - 1)),
 						-height * (j / (float) (particleHeight - 1)),
 						                   0.0f);
-					// Debug.Log ("PARTICLE: " + "(" + i + ", " + j + "): " + position);
-					particles.Add(new myParticle (position));
+					particles[idx] = new myParticle (this, idx, position);
+					vert [idx++] = position;
 				}
 			}
 
@@ -191,13 +206,44 @@ namespace AssemblyCSharp
 			// Pin top two corners
 			getParticle(0, 0).setPinned(true);
 			getParticle (particleWidth - 1, 0).setPinned (true);
+
+
+			// Create the triangles
+			idx = 0;
+			for (int i = 0; i < particleWidth - 1; i++) {
+				for (int j = 0; j < particleHeight - 1; j++) {
+					tria [idx++] = getParticleIdx (i, j);
+					tria [idx++] = getParticleIdx (i + 1, j);
+					tria [idx++] = getParticleIdx (i, j + 1);
+						 
+					tria [idx++] = getParticleIdx (i + 1, j);
+					tria [idx++] = getParticleIdx (i + 1, j + 1);
+					tria [idx++] = getParticleIdx (i, j + 1);
+				}
+			}
+
+			Vector2[] uvs = new Vector2[tria.Length];
+
+			// Finish off the mesh
+//			for (int i=0; i < uvs.Length; i++) {
+//				uvs[i] = new Vector2(vert[i].x, vert[i].z);
+//			}
+
+			mesh.vertices = vert;
+			// mesh.uv = uvs;
+			mesh.triangles = tria;
+
+			mesh.RecalculateNormals ();
+			;
+
+			GetComponent<MeshFilter> ().mesh = mesh;
 		}
 	
 
 		void FixedUpdate() {
 			addWindForce (windDirection);
 				
-			for (int i = 0; i < particles.Count ; i++) {
+			for (int i = 0; i < particles.Length ; i++) {
 				particles [i].updateParticle ();
 			}
 
@@ -207,6 +253,13 @@ namespace AssemblyCSharp
 					constraints [j].satisfy ();
 				}
 			}
+
+
+			for (int i = 0; i < particles.Length ; i++) {
+				vert[i] = particles [i].getPos();
+			}
+
+			GetComponent<MeshFilter> ().mesh.vertices = vert;
 		}
 	}
 }

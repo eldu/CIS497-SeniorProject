@@ -28,7 +28,13 @@ namespace AssemblyCSharp
 		private Vector3 m_wind;
 		private Vector3 m_constraint; // Sum of forces from contraints
 
-		public myParticle(Vector3 position) {
+		private int m_idx;
+		private myParticleSystem m_parent;
+
+		public myParticle(myParticleSystem parent, int idx, Vector3 position) {
+			m_idx = idx;
+			m_parent = parent;
+
 			m_dim = 12;
 			m_gravity = new Vector3 (0.0f, -9.8f, 0.0f);
 			m_wind = new Vector3 (0.0f, 0.0f, 0.0f);
@@ -55,9 +61,35 @@ namespace AssemblyCSharp
 			setMass (m_mass);
 		}
 
-		public myParticle (myParticleSystem parent)
-		{
-		}
+//		public myParticle (myParticleSystem parent, int idx)
+//		{
+//			m_idx = idx;
+//
+//			m_dim = 12;
+//			m_gravity = new Vector3 (0.0f, -9.8f, 0.0f);
+//			m_wind = new Vector3 (0.0f, 0.0f, 0.0f);
+//
+//			m_state = new float[12];
+//			m_state [0] = position.x;
+//			m_state [1] = position.y;
+//			m_state [2] = position.z;
+//			m_state [3] = 0.0f;
+//			m_state [4] = 0.0f;
+//			m_state [5] = 0.0f;
+//			m_state [6] = m_mass * m_gravity[0];
+//			m_state [7] = m_mass * m_gravity[1];
+//			m_state [8] = m_mass * m_gravity[2];
+//			m_state [9] = m_mass;
+//			m_state [10] = 0.0f;
+//			m_state [11] = 0.0f;
+//
+//			m_pos = parent
+//			m_vel = new Vector3 (0.0f, 0.0f, 0.0f);
+//
+//			m_stateDot = new float[12];
+//
+//			setMass (m_mass);
+//		}
 
 		public void setPinned(bool b) {
 			pinned = b;
