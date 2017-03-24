@@ -8,7 +8,7 @@ namespace AssemblyCSharp
 	public class myParticle
 	{
 		// Determines if this is fixed
-		private bool pinned;
+		// private bool pinned;
 
 		private int m_dim;
 
@@ -21,20 +21,15 @@ namespace AssemblyCSharp
 		// One simulation step
 		private float m_deltaT; 
 
-		private float m_mass = 1.0f;
+		private float m_mass = 0.1f;
+		// private float m_invmass;
 		private Vector3 m_pos;
 		private Vector3 m_vel;
 		private Vector3 m_gravity;
 		private Vector3 m_wind;
 		private Vector3 m_constraint; // Sum of forces from contraints
 
-		private int m_idx;
-		private myParticleSystem m_parent;
-
-		public myParticle(myParticleSystem parent, int idx, Vector3 position) {
-			m_idx = idx;
-			m_parent = parent;
-
+		public myParticle(Vector3 position) {
 			m_dim = 12;
 			m_gravity = new Vector3 (0.0f, -9.8f, 0.0f);
 			m_wind = new Vector3 (0.0f, 0.0f, 0.0f);
@@ -61,39 +56,9 @@ namespace AssemblyCSharp
 			setMass (m_mass);
 		}
 
-//		public myParticle (myParticleSystem parent, int idx)
-//		{
-//			m_idx = idx;
-//
-//			m_dim = 12;
-//			m_gravity = new Vector3 (0.0f, -9.8f, 0.0f);
-//			m_wind = new Vector3 (0.0f, 0.0f, 0.0f);
-//
-//			m_state = new float[12];
-//			m_state [0] = position.x;
-//			m_state [1] = position.y;
-//			m_state [2] = position.z;
-//			m_state [3] = 0.0f;
-//			m_state [4] = 0.0f;
-//			m_state [5] = 0.0f;
-//			m_state [6] = m_mass * m_gravity[0];
-//			m_state [7] = m_mass * m_gravity[1];
-//			m_state [8] = m_mass * m_gravity[2];
-//			m_state [9] = m_mass;
-//			m_state [10] = 0.0f;
-//			m_state [11] = 0.0f;
-//
-//			m_pos = parent
-//			m_vel = new Vector3 (0.0f, 0.0f, 0.0f);
-//
-//			m_stateDot = new float[12];
-//
-//			setMass (m_mass);
+//		public void setPinned(bool b) {
+//			pinned = b;
 //		}
-
-		public void setPinned(bool b) {
-			pinned = b;
-		}
 
 		// Set the particle state vector
 		public void setState(float[] newState) {
@@ -113,17 +78,22 @@ namespace AssemblyCSharp
 			return m_pos;
 		}
 
-		public void offsetPos(Vector3 offset) {
-			if (!pinned) {
-				//Debug.Log ("Original: " + m_pos);
+		public void setPos(Vector3 newPos) {
+			m_pos = newPos;
 
+			m_state [0] = m_pos.x;
+			m_state [1] = m_pos.y;
+			m_state [2] = m_pos.z;
+		}
+
+		public void offsetPos(Vector3 offset) {
+			// if (!pinned) {
 				m_pos += offset;
 
-				//Debug.Log ("Offseted Position:" + m_pos);
 				m_state [0] = m_pos.x;
 				m_state [1] = m_pos.y;
 				m_state [2] = m_pos.z;
-			}
+			// }
 		}
 
 		// Get the state vector
@@ -151,7 +121,7 @@ namespace AssemblyCSharp
 		// Uses RK2
 		public void updateState(float deltaT) {
 			// COmpute Dynamics
-			computeDynamics (m_state, m_stateDot, deltaT);
+			// computeDynamics (m_state, m_stateDot, deltaT);
 
 			// RK2 Integration
 			// Predicted state at t_k+1
@@ -227,7 +197,10 @@ namespace AssemblyCSharp
 		// stateDot: a vector containing the derivatives of the stateVector
 		// deltaT: change in time
 		// Given the state, computes stateDot
-		public void computeDynamics(float[] state, float[] stateDot, float deltaT) {
+		public void computeDynamics() {
+			float[] state = m_state; 
+			float[] stateDot = m_stateDot;
+			float deltaT = m_deltaT;
 			/*	State vector:
 			*  0 : position x
 			*  1 : position y
@@ -265,23 +238,16 @@ namespace AssemblyCSharp
 
 		// Computes one simulation step update
 		public void updateParticle () {
-			if (!pinned) {
+			//if (!pinned) {
 				float deltaT = Time.deltaTime;
 				computeForces ();
 				updateState (deltaT);
-			}
+			//}
 		}
 
-		public bool isPinned() {
-			return pinned;
-		}
-
-
-//		void FixedUpdate() {
-//			updateParticle ();
-//
+//		public bool isPinned() {
+//			return pinned;
 //		}
-	
 	}
 }
 
