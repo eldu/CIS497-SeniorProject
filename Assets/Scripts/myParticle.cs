@@ -11,6 +11,7 @@ namespace AssemblyCSharp
 		// private bool pinned;
 
 		private int m_dim;
+		private bool pinned;
 
 		// State Vector
 		private float[] m_state;
@@ -30,8 +31,10 @@ namespace AssemblyCSharp
 		// private Vector3 m_constraint; // Sum of forces from contraints
 
 		public myParticle(Vector3 position) {
+			pinned = false;
+
 			m_dim = 12;
-			m_gravity = new Vector3 (0.0f, -9.8f, 0.0f);
+			m_gravity = new Vector3 (0.0f, 0.0f, 0.0f);
 			m_wind = new Vector3 (0.0f, 0.0f, 0.0f);
 
 			m_state = new float[12];
@@ -56,6 +59,10 @@ namespace AssemblyCSharp
 			setMass (m_mass);
 		}
 			
+		public void setPinned(bool b) {
+			pinned = b;
+		}
+
 		// Set the particle state vector
 		public void setState(float[] newState) {
 			for (int i = 0; i < m_dim; i++)
@@ -83,11 +90,13 @@ namespace AssemblyCSharp
 		}
 
 		public void offsetPos(Vector3 offset) {
-			m_pos += offset;
+			if (!pinned) {
+				m_pos += offset;
 
-			m_state [0] = m_pos.x;
-			m_state [1] = m_pos.y;
-			m_state [2] = m_pos.z;
+				m_state [0] = m_pos.x;
+				m_state [1] = m_pos.y;
+				m_state [2] = m_pos.z;
+			}
 		}
 
 		// Get the state vector
@@ -168,7 +177,7 @@ namespace AssemblyCSharp
 			m_state [8] = 0;
 
 			// Add default force gravity
-			addForce (m_mass * m_gravity);
+			//addForce (m_mass * m_gravity);
 			addForce (m_wind);
 			// addForce (m_constraint);
 
@@ -232,9 +241,11 @@ namespace AssemblyCSharp
 
 		// Computes one simulation step update
 		public void updateParticle () {
-			float deltaT = Time.deltaTime;
-			computeForces ();
-			updateState (deltaT);
+			if (!pinned) {
+				float deltaT = Time.deltaTime;
+				computeForces ();
+				updateState (deltaT);
+			}
 		}
 	}
 }
