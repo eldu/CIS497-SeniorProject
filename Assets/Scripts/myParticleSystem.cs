@@ -197,7 +197,7 @@ namespace AssemblyCSharp
 			}
 
 			for (int i = 0; i < particles.Length ; i++) {
-				particles [i].updateParticle ();
+				particles [i].updateParticle (Time.fixedDeltaTime);
 			}
 
 //			//Satisfy the Contraints
@@ -214,10 +214,12 @@ namespace AssemblyCSharp
 //				getParticle (particleWidth - 1, 0).setPos (topRight);
 			}
 
+			// Update Velocities
+			// Set vertices to mesh
 			for (int i = 0; i < particles.Length ; i++) {
+				particles [i].updateVel (Time.deltaTime);
 				vert[i] = particles [i].getPos();
 			}
-
 			GetComponent<MeshFilter> ().mesh.vertices = vert;
 		}
 
