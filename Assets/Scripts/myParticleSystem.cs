@@ -147,25 +147,34 @@ namespace AssemblyCSharp
 
 			// Bottom Row
 			for (int i = 0; i < particleWidth - 1; i++) {
-				makeConstraint (getParticle (i, particleHeight - 1), 
-					getParticle (i + 1, particleHeight - 1));
+				makeConstraint (getParticle (i, particleHeight - 1), getParticle (i + 1, particleHeight - 1));
 			}
 
 			// Right most
 			for (int j = 0; j < particleHeight - 1; j++) {
-				makeConstraint (getParticle(particleWidth - 1, j),
-					getParticle(particleWidth - 1, j + 1));
+				makeConstraint (getParticle(particleWidth - 1, j), getParticle(particleWidth - 1, j + 1));
 			}
 
-			// Bend Springs
-			for(int i = 0; i <particleWidth; i++)
+			// Bend Constraints
+			for(int i = 0; i <particleWidth - 2; i++)
 			{
-				for(int j=0; j < particleHeight; j++)
+				for(int j=0; j < particleHeight - 2; j++)
 				{
-					if (i < particleWidth-2) makeConstraint(getParticle(i, j),getParticle(i + 2,j));
-					if (j<particleHeight-2) makeConstraint(getParticle(i, j),getParticle(i, j + 2));
-					if (i<particleWidth-2 && j<particleHeight-2) makeConstraint(getParticle(i, j),getParticle(i + 2,j + 2));
-					if (i<particleWidth-2 && j<particleHeight-2) makeConstraint(getParticle(i + 2, j),getParticle(i, j + 2));			}
+					makeConstraint(getParticle(i, j), getParticle(i + 2,j));
+					makeConstraint(getParticle(i, j), getParticle(i, j + 2));
+					makeConstraint(getParticle(i, j), getParticle(i + 2,j + 2));
+					makeConstraint(getParticle(i + 2, j), getParticle(i, j + 2));			
+				}
+			}
+
+			// Bottom Row
+			for (int i = 0; i < particleWidth - 2; i++) {
+				makeConstraint (getParticle (i, particleHeight - 2), getParticle (i + 2, particleHeight - 2));
+			}
+
+			// Right most
+			for (int j = 0; j < particleHeight - 2; j++) {
+				makeConstraint (getParticle(particleWidth - 2, j), getParticle(particleWidth - 2, j + 2));
 			}
 
 			// Create the triangles
