@@ -8,6 +8,8 @@ namespace AssemblyCSharp
 {
 	public class myParticleSystem : MonoBehaviour
 	{
+		public GameObject[] obstacles;
+
 		private Vector3[] vert;
 		private int[] tria;
 		private Mesh mesh;
@@ -74,9 +76,16 @@ namespace AssemblyCSharp
 		}
 
 		void Start () {
+			// Set Obstacles
+			obstacles = GameObject.FindGameObjectsWithTag("Obstacle");
+
+
+			// Set Pin Local Locations
 			topLeft = new Vector3(0.0f, 0.0f, 0.0f);
 			topRight = new Vector3 (width, 0.0f, 0.0f);
 
+
+			// Create
 			particles = new myParticle[particleWidth * particleHeight];
 			constraints = new List<Constraint>();
 	
@@ -206,6 +215,14 @@ namespace AssemblyCSharp
 				getParticle (0, 0).setPos (vert [getParticleIdx(0, 0)]);
 				getParticle (particleWidth - 1, 0).setPos (vert [getParticleIdx(particleWidth - 1, 0)]);
 
+
+				//SPHERE COLLISION
+				for (int k = 0; k < obstacles.Length; k++) {
+					float radius = obstacles [k].transform.localScale.x / 2.0f;
+					for (int j = 0; j < particles.Length; j++) {
+						particles [j].sphereCollision (obstacles [k].transform.position, radius);
+					}
+				}
 			}
 
 			// Update Velocities

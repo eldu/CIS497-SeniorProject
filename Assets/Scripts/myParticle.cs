@@ -22,7 +22,7 @@ namespace AssemblyCSharp
 		// One simulation step
 		private float m_deltaT; 
 
-		private float m_mass = 0.5f;
+		private float m_mass = 1.0f;
 		private Vector3 m_pos;
 		private Vector3 m_opos; // Old Position;
 		private Vector3 m_vel;
@@ -257,6 +257,15 @@ namespace AssemblyCSharp
 				computeForces ();
 				updateState (deltaTime);
 			//}
+		}
+
+		// Pushes 
+		public void sphereCollision(Vector3 center, float radius) {
+			Vector3 dir = getPos () - center;
+			float length = dir.magnitude;
+			if (length < radius) {
+				offsetPos(dir.normalized * (radius - length));
+			}
 		}
 	}
 }
