@@ -29,7 +29,11 @@ namespace AssemblyCSharp
 		private Vector3 m_gravity;
 		private Vector3 m_wind;
 
-		public myParticle(Vector3 position) {
+		private myParticleSystem m_ps;
+
+		public myParticle(myParticleSystem ps, Vector3 position) {
+			m_ps = ps;
+
 			pinned = false;
 	
 			m_gravity = new Vector3 (0.0f, 0.0f, 0.0f);
@@ -74,6 +78,7 @@ namespace AssemblyCSharp
 			m_vel[2] = m_state[5];
 		}
 
+		// Returns Position in local space
 		public Vector3 getPos() {
 			return m_pos;
 		}
@@ -87,13 +92,13 @@ namespace AssemblyCSharp
 		}
 
 		public void offsetPos(Vector3 offset) {
-			if (!pinned) {
+			//if (!pinned) {
 				m_pos += offset;
 
 				m_state [0] = m_pos.x;
 				m_state [1] = m_pos.y;
 				m_state [2] = m_pos.z;
-			}
+			//}
 		}
 
 		// Approximate velocity based on the old position, current position, and a small deltatime
@@ -191,11 +196,13 @@ namespace AssemblyCSharp
 			m_state [8] = 0;
 
 			// Add default force gravity
-			addForce (m_mass * m_gravity);
-			addForce (m_wind);
+			if (!pinned) {
+				addForce (m_mass * m_gravity);
+				addForce (m_wind);
 
-			// Reset wind and constraint forces
-			m_wind = new Vector3 ();
+				// Reset wind and constraint forces
+				m_wind = new Vector3 ();
+			}
 		}
 
 		public void addWindForce(Vector3 force) {
@@ -247,10 +254,10 @@ namespace AssemblyCSharp
 
 		// Computes one simulation step update
 		public void updateParticle (float deltaTime) {
-			if (!pinned) {
+			//if (!pinned) {
 				computeForces ();
 				updateState (deltaTime);
-			}
+			//}
 		}
 	}
 }

@@ -19,7 +19,7 @@ namespace AssemblyCSharp
 		public int particleHeight = 5; // number of particles in height
 		public float width = 5.0f;
 		public float height = 5.0f;
-		public int iterations = 100;
+		public int iterations = 20;
 		public Vector3 windDirection = new Vector3 (0.5f, 0.0f, 0.2f);
 
 		private myParticle[] particles;
@@ -65,26 +65,9 @@ namespace AssemblyCSharp
 		
 			return normal;
 		}
-			
-		// Adds a wind force to a triangle
-//		void addWindToTriangle(myParticle p1, myParticle p2, myParticle p3, Vector3 windDir) {
-//			Vector3 normal = getTriangleNormal (p1, p2, p3);
-//			Vector3 normalDir = Vector3.Normalize (normal);
-//			Vector3 force = normal * Vector3.Dot (normalDir, windDir); // based on area of the triangle as well
-//			p1.addWindForce (force);
-//			p2.addWindForce (force);
-//			p3.addWindForce (force);
-//		}
 
 		// Add wind force to the entire cloth
 		void addWindForce(Vector3 direction) {
-//			for (int i = 0; i < particleWidth - 1; i++) {
-//				for (int j = 0; j < particleHeight - 1; j++) {
-////					addWindToTriangle (getParticle (i, j), getParticle (i + 1, j), getParticle (i, j + 1), direction);
-////					addWindToTriangle (getParticle (i + 1, j), getParticle (i + 1, j + 1), getParticle (i, j + 1), direction);
-//
-//				}
-//			}
 			for (int i = 0; i < particles.Length; i++) {
 				particles [i].addWindForce (windDirection);
 			}
@@ -111,7 +94,7 @@ namespace AssemblyCSharp
 						                   0.0f);
 					position = position;
 
-					particles[idx] = new myParticle (position);
+					particles[idx] = new myParticle (this, position);
 					vert [idx++] = position;
 				}
 			}
@@ -155,7 +138,7 @@ namespace AssemblyCSharp
 				makeConstraint (getParticle(particleWidth - 1, j), getParticle(particleWidth - 1, j + 1));
 			}
 
-			// Bend Constraints
+//			// Bend Constraints
 			for(int i = 0; i <particleWidth - 2; i++)
 			{
 				for(int j=0; j < particleHeight - 2; j++)
@@ -198,10 +181,10 @@ namespace AssemblyCSharp
 		}
 	
 		void FixedUpdate() {
-			// windDirection.Normalize ();
 			addWindForce (windDirection);
 
 			for (int i = 0; i < particles.Length ; i++) {
+				particles [i].updateVel (Time.deltaTime); // Update Velocities
 				particles [i].computeDynamics();
 			}
 
@@ -214,55 +197,31 @@ namespace AssemblyCSharp
 				for (int j = 0; j < constraints.Count; j++) {
 					constraints [j].satisfy ();
 				}
-
+					
 				// HARDCODED PINNING.
-//				vert [getParticleIdx(0, 0)] = topLeft;
-//				vert [getParticleIdx(particleWidth - 1, 0)] = topRight;
+				// REMOVE IF STATEMENTS if (!pinned) if this is uncommented
+				vert [getParticleIdx(0, 0)] = transform.position + topLeft;
+				vert [getParticleIdx(particleWidth - 1, 0)] = transform.position + topRight;
 
-//				getParticle (0, 0).setPos (topLeft);
-//				getParticle (particleWidth - 1, 0).setPos (topRight);
+				getParticle (0, 0).setPos (transform.position);
+				getParticle (particleWidth - 1, 0).setPos (topRight);
+
 			}
 
 			// Update Velocities
 			// Set vertices to mesh
 			for (int i = 0; i < particles.Length ; i++) {
-				particles [i].updateVel (Time.deltaTime);
 				vert[i] = particles [i].getPos();
 			}
 			GetComponent<MeshFilter> ().mesh.vertices = vert;
 		}
 
 
-		void OnDrawGizmos() {
-			for (int i = 0; i < particles.Length; i++) {
-				Gizmos.DrawSphere (particles [i].getPos (), 0.1f);
-			}
-//			Vector3 A = particles [getParticleIdx (4, 4)].getPos ();
-//			Vector3 C = particles [getParticleIdx (4, 5)].getPos ();
-//			Vector3 B = particles [getParticleIdx (5, 4)].getPos ();
-//			Vector3 D = particles [getParticleIdx (5, 5)].getPos ();
-//
-//			Gizmos.color = Color.black;
-//			Gizmos.DrawLine (A, B);
-//			Gizmos.DrawLine (A, C);
-//			Gizmos.DrawLine (A, D);
-//			Gizmos.DrawLine (C, B);
-//
-//
-//			Vector3 AA = particles [getParticleIdx (6, 6)].getPos ();
-//			Vector3 CC = particles [getParticleIdx (6, 7)].getPos ();
-//			Vector3 BB = particles [getParticleIdx (7, 6)].getPos ();
-//			Vector3 DD = particles [getParticleIdx (7, 7)].getPos ();
-//
-//			Vector3 AABB = AA - BB;
-//			Debug.Log (AABB.magnitude);
-//
-//			Gizmos.DrawLine (AA, BB);
-//			Gizmos.DrawLine (AA, CC);
-//			Gizmos.DrawLine (AA, DD);
-//			Gizmos.DrawLine (CC, BB);
-
-		}
+//		void OnDrawGizmos() {
+//			for (int i = 0; i < particles.Length; i++) {
+//				Gizmos.DrawSphere (particles [i].getPos (), 0.1f);
+//			}
+//		}
 	}
 }
 
