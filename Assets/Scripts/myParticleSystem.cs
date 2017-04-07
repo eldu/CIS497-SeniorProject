@@ -138,7 +138,7 @@ namespace AssemblyCSharp
 				makeConstraint (getParticle(particleWidth - 1, j), getParticle(particleWidth - 1, j + 1));
 			}
 
-//			// Bend Constraints
+			// Bend Constraints
 			for(int i = 0; i <particleWidth - 2; i++)
 			{
 				for(int j=0; j < particleHeight - 2; j++)
@@ -203,8 +203,8 @@ namespace AssemblyCSharp
 				vert [getParticleIdx(0, 0)] = transform.position + topLeft;
 				vert [getParticleIdx(particleWidth - 1, 0)] = transform.position + topRight;
 
-				getParticle (0, 0).setPos (transform.position);
-				getParticle (particleWidth - 1, 0).setPos (topRight);
+				getParticle (0, 0).setPos (vert [getParticleIdx(0, 0)]);
+				getParticle (particleWidth - 1, 0).setPos (vert [getParticleIdx(particleWidth - 1, 0)]);
 
 			}
 

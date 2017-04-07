@@ -22,7 +22,7 @@ namespace AssemblyCSharp
 		// One simulation step
 		private float m_deltaT; 
 
-		private float m_mass = 0.1f;
+		private float m_mass = 0.5f;
 		private Vector3 m_pos;
 		private Vector3 m_opos; // Old Position;
 		private Vector3 m_vel;
@@ -105,7 +105,6 @@ namespace AssemblyCSharp
 		// TODO: Check on this
 		public void updateVel(float deltaTime) {
 			m_vel = (m_pos - m_opos) / deltaTime;
-			// Debug.Log (m_vel);
 
 			m_state [3] = m_vel [0];
 			m_state [4] = m_vel [1];
