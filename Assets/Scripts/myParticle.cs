@@ -9,6 +9,8 @@ namespace AssemblyCSharp
 	{
 		// Determines if this is fixed
 		// private bool pinned;
+		public List<Constraint> cs; // list of constraints
+		public Vector3 k; // Spring Constant
 
 		private int m_dim;
 		private bool pinned;
@@ -32,6 +34,9 @@ namespace AssemblyCSharp
 		private myParticleSystem m_ps;
 
 		public myParticle(myParticleSystem ps, Vector3 position) {
+			cs = new List<Constraint> ();
+			k = new Vector3(0.1f, 0.01f, 0.01f);
+
 			m_ps = ps;
 
 			pinned = false;
@@ -58,6 +63,10 @@ namespace AssemblyCSharp
 			m_stateDot = new float[10];
 
 			setMass (m_mass);
+		}
+
+		public void addConstraint(Constraint c) {
+			cs.Add (c);
 		}
 			
 		public void setPinned(bool b) {
@@ -194,14 +203,16 @@ namespace AssemblyCSharp
 			m_state [7] = 0;
 			m_state [8] = 0;
 
-			// Add default force gravity
-			if (!pinned) {
-				addForce (m_mass * m_gravity);
-				addForce (m_wind);
+			// Add gravity and wind forces
+			addForce (m_mass * m_gravity + m_wind);
 
-				// Reset wind and constraint forces
-				m_wind = new Vector3 ();
+			// Take Away Spring
+			for (int i = 0; i < cs.Count; i++) {
+				addForce (-k * (cs [i].getlength () - cs [i].getRestLength ()));
 			}
+
+			// Reset wind and constraint forces
+			m_wind.Set(0.0f, 0.0f, 0.0f);
 		}
 
 		public void addWindForce(Vector3 force) {

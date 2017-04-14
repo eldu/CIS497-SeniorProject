@@ -15,6 +15,9 @@ namespace AssemblyCSharp
 			p1 = _p1;
 			p2 = _p2;
 			restLength = Vector3.Magnitude(p2.getPos () - p1.getPos ());
+
+			p1.addConstraint (this);
+			p2.addConstraint (this);
 		}
 
 		public float getRestLength() {
@@ -33,16 +36,7 @@ namespace AssemblyCSharp
 
 			p1.offsetPos (delta * 0.5f * diff);
 			p2.offsetPos (-delta * 0.5f * diff);
-
-
-			// Faster, Approximate
-			//delta*=restLength*restLength/(delta*delta+restLength*restLength)-0.5;
-			//				
-			//			p1.offsetPos (delta);
-			//			p2.offsetPos (-delta);
 		}
-
-
 	}
 }
 

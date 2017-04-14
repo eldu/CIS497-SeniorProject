@@ -9,6 +9,7 @@ namespace AssemblyCSharp
 	public class myParticleSystem : MonoBehaviour
 	{
 		public GameObject[] obstacles;
+		public Vector3 k;
 
 		private Vector3[] vert;
 		private int[] tria;
@@ -21,7 +22,7 @@ namespace AssemblyCSharp
 		public int particleHeight = 5; // number of particles in height
 		public float width = 5.0f;
 		public float height = 5.0f;
-		public int iterations = 20;
+		public int iterations = 5;
 		public Vector3 windDirection = new Vector3 (0.5f, 0.0f, 0.2f);
 
 		private myParticle[] particles;
@@ -76,6 +77,8 @@ namespace AssemblyCSharp
 		}
 
 		void Start () {
+			k = new Vector3 (0.01f, 0.01f, 0.01f);
+
 			// Set Obstacles
 			obstacles = GameObject.FindGameObjectsWithTag("Obstacle");
 
@@ -218,9 +221,9 @@ namespace AssemblyCSharp
 
 				//SPHERE COLLISION
 				for (int k = 0; k < obstacles.Length; k++) {
-					float radius = obstacles [k].transform.localScale.x / 2.0f;
+					float radius = obstacles [k].transform.localScale.x * 0.55f;
 					for (int j = 0; j < particles.Length; j++) {
-						particles [j].sphereCollision (obstacles [k].transform.position, radius);
+						particles [j].sphereCollision (obstacles [k].transform.position - transform.position, radius);
 					}
 				}
 			}
