@@ -106,17 +106,10 @@ namespace AssemblyCSharp
 						                   0.0f);
 					position = position;
 
-					particles[idx] = new myParticle (this, position);
+					particles[idx] = new myParticle (position);
 					vert [idx++] = position;
 				}
 			}
-
-			// Pinning
-//			particles[0].setPinned(true);
-//			particles [getParticleIdx (particleWidth - 1, 0)].setPinned(true);
-//			particles [getParticleIdx (4, 4)].setPinned (true);
-//			particles [getParticleIdx (4, 5)].setPinned (true);
-//			Debug.Log (getParticleIdx (4, 4));
 
 			for (int i = 0; i < particleHeight; i++) {
 				particles [getParticleIdx (0, i)].setPinned (true);
@@ -204,7 +197,7 @@ namespace AssemblyCSharp
 				particles [i].updateParticle (Time.fixedDeltaTime);
 			}
 
-//			//Satisfy the Contraints
+			//Satisfy the Contraints
 			for (int i = 0; i < iterations; i++) {
 				for (int j = 0; j < constraints.Count; j++) {
 					constraints [j].satisfy ();

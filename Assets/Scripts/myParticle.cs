@@ -31,13 +31,13 @@ namespace AssemblyCSharp
 		private Vector3 m_gravity;
 		private Vector3 m_wind;
 
-		private myParticleSystem m_ps;
+		private Vector3 m_original;
 
-		public myParticle(myParticleSystem ps, Vector3 position) {
+		public myParticle(Vector3 position) {
+			m_original = position;
+
 			cs = new List<Constraint> ();
 			k = new Vector3(0.1f, 0.01f, 0.01f);
-
-			m_ps = ps;
 
 			pinned = false;
 	
