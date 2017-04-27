@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿// Author: Dave Hampson
+// Reference: http://wiki.unity3d.com/index.php?title=FramesPerSecond
+using UnityEngine;
 using System.Collections;
 
 public class FPSDisplay : MonoBehaviour
