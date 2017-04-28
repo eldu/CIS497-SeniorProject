@@ -57,8 +57,6 @@ namespace AssemblyCSharp
 			m_vel = new Vector3 (0.0f, 0.0f, 0.0f);
 
 			m_stateDot = new float[10];
-
-			setMass (m_mass);
 		}
 
 		public void addConstraint(Constraint c) {
@@ -124,17 +122,6 @@ namespace AssemblyCSharp
 			return m_stateDot;
 		}
 
-		// Sets the mass
-		public void setMass(float _mass) {
-			m_state[9] = _mass;
-			m_mass = _mass;
-		}
-
-		// Gets the mass
-		public float getMass() {
-			return m_state[9];
-		}
-
 		// Updates the particle state
 		// Uses RK2
 		public void updateState(float deltaT) {
@@ -163,7 +150,6 @@ namespace AssemblyCSharp
 			// v(t_k+1) = v(t_k) + deltaT / 2 * (a(t_k) + a_p(t_k+1));
 			// a_p(t_k+1) = a + deltaT * f(a) = a + deltaT * 0 = a
 			// a(t_k) = a_p(t_k+1)
-			// float m = m_state[9];
 			m_state[3] = m_state[3] + deltaT * m_stateDot[3];
 			m_state[4] = m_state[4] + deltaT * m_stateDot[4];
 			m_state[5] = m_state[5] + deltaT * m_stateDot[5];
@@ -226,7 +212,6 @@ namespace AssemblyCSharp
 			*  6 : force x
 			*  7 : force y
 			*  8 : force z
-			*  9 : mass
 			*/
 
 			// Derivatives of position is the velocity;
@@ -236,17 +221,15 @@ namespace AssemblyCSharp
 
 			// Derivatives of the velocity
 			// v = f/m
-			float m = state[9];
-			stateDot[3] = state[6] / m;
-			stateDot[4] = state[7] / m;
-			stateDot[5] = state[8] / m;
+			stateDot[3] = state[6] / m_mass;
+			stateDot[4] = state[7] / m_mass;
+			stateDot[5] = state[8] / m_mass;
 
 
 			// Force and mass are constant therefore their derivatives are 0
 			stateDot[6] = 0; // force x
 			stateDot[7] = 0; // force y
 			stateDot[8] = 0; // force z
-			stateDot[9] = 0; // mass
 		}
 
 		// Computes one simulation step update

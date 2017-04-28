@@ -213,8 +213,7 @@ namespace AssemblyCSharp
 				}
 			}
 
-			// Update Velocities
-			// Set vertices to mesh
+			// Sets Vertices of the Mesh to the Particle Positions
 			for (int i = 0; i < particles.Length ; i++) {
 				vert[i] = particles [i].getPos();
 			}
