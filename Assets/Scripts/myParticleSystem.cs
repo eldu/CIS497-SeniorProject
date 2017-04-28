@@ -178,14 +178,14 @@ namespace AssemblyCSharp
 				for (int k = 0; k < obstacles.Length; k++) {
 					float radius = obstacles [k].transform.localScale.x * 0.55f;
 					for (int j = 0; j < particles.Length; j++) {
-						particles [j].sphereCollision (obstacles [k].transform.position - transform.position, radius);
+						particles [j].sphereCollision (obstacles [k].transform.position, radius);
 					}
 				}
 			}
 
 			// Sets Vertices of the Mesh to the Particle Positions
 			for (int i = 0; i < particles.Length ; i++) {
-				vert[i] = particles [i].getPos();
+				vert[i] = particles [i].getPos() - transform.position;
 			}
 			GetComponent<MeshFilter> ().mesh.vertices = vert;
 		}

@@ -11,6 +11,9 @@ namespace AssemblyCSharp
 		public List<Constraint> cs; // list of constraints
 		public Vector3 k; // Spring Constant
 
+		public float damping = 0.04f;
+		private float drag;
+
 		// State Vector
 		private float[] m_state;
 
@@ -39,7 +42,7 @@ namespace AssemblyCSharp
 
 			p_state = new float[6];
 
-			m_state = new float[10];
+			m_state = new float[9];
 			m_state [0] = position.x;            // Current Position
 			m_state [1] = position.y;
 			m_state [2] = position.z;
@@ -49,13 +52,12 @@ namespace AssemblyCSharp
 			m_state [6] = m_mass * m_gravity[0]; // Force
 			m_state [7] = m_mass * m_gravity[1];
 			m_state [8] = m_mass * m_gravity[2];
-			m_state [9] = m_mass;                // Mass
 
 			m_pos = new Vector3 (position.x, position.y, position.z);
 			m_opos = new Vector3 (position.x, position.y, position.z);
 			m_vel = new Vector3 (0.0f, 0.0f, 0.0f);
 
-			m_stateDot = new float[10];
+			m_stateDot = new float[6];
 		}
 
 		public void pin(Matrix4x4 t) {
@@ -106,13 +108,15 @@ namespace AssemblyCSharp
 		public void updateState(float deltaT) {
 			// COmpute Dynamics
 			// computeDynamics (m_state, m_stateDot, deltaT);
+			drag = 1.0f - damping;
 
 			// RK2 Integration
 			// Predicted state at t_k+1
 			// x_p(t_k+1) = x(t_k) + v(t_k) * deltaT;
-			p_state[0] = m_state[0] + m_stateDot[0] * deltaT;
-			p_state[1] = m_state[1] + m_stateDot[1] * deltaT;
-			p_state[2] = m_state[2] + m_stateDot[2] * deltaT;
+			p_state[0] = (m_state[0] + m_stateDot[0] * deltaT) * drag;
+			p_state[1] = (m_state[1] + m_stateDot[1] * deltaT) * drag;
+			p_state[2] = (m_state[2] + m_stateDot[2] * deltaT) * drag;
+
 
 			// v_p(t_k+1) = v(t_k) + a(t_k) * deltaT;
 			p_state[3] = m_state[3] + m_stateDot[3] * deltaT;
@@ -199,11 +203,8 @@ namespace AssemblyCSharp
 			m_stateDot[4] = m_state[7] / m_mass;
 			m_stateDot[5] = m_state[8] / m_mass;
 
-			
 			// Force and mass are constant therefore their derivatives are 0
-			m_stateDot[6] = 0; // force x
-			m_stateDot[7] = 0; // force y
-			m_stateDot[8] = 0; // force z
+			// Unnecessary to have
 		}
 
 		// Computes one simulation step update
