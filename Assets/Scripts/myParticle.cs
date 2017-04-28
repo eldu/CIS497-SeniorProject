@@ -12,11 +12,17 @@ namespace AssemblyCSharp
 		public List<Constraint> cs; // list of constraints
 		public Vector3 k; // Spring Constant
 
+		private int m_dim;
+		private bool pinned;
+
 		// State Vector
 		private float[] m_state;
 
 		// Derivative of the state vector
 		private float[] m_stateDot; 
+
+		// One simulation step
+		private float m_deltaT; 
 
 		private float m_mass = 1.0f;
 		private Vector3 m_pos;
@@ -32,6 +38,8 @@ namespace AssemblyCSharp
 
 			cs = new List<Constraint> ();
 			k = new Vector3(0.1f, 0.01f, 0.01f);
+
+			pinned = false;
 	
 			m_gravity = new Vector3 (0.0f, 0.0f, 0.0f);
 			m_wind = new Vector3 (0.0f, 0.0f, 0.0f);
@@ -57,27 +65,27 @@ namespace AssemblyCSharp
 			setMass (m_mass);
 		}
 
-		public void pin() {
-			setPos (m_original);
-		}
-
 		public void addConstraint(Constraint c) {
 			cs.Add (c);
 		}
+			
+		public void setPinned(bool b) {
+			pinned = b;
+		}
 
-//		// Set the particle state vector
-//		public void setState(float[] newState) {
-//			for (int i = 0; i < m_dim; i++)
-//				m_state[i] = newState[i];
-//
-//			m_pos[0] = m_state[0];
-//			m_pos[1] = m_state[1]; 
-//			m_pos[2] = m_state[2];
-//
-//			m_vel[0] = m_state[3];
-//			m_vel[1] = m_state[4];
-//			m_vel[2] = m_state[5];
-//		}
+		// Set the particle state vector
+		public void setState(float[] newState) {
+			for (int i = 0; i < m_dim; i++)
+				m_state[i] = newState[i];
+
+			m_pos[0] = m_state[0];
+			m_pos[1] = m_state[1]; 
+			m_pos[2] = m_state[2];
+
+			m_vel[0] = m_state[3];
+			m_vel[1] = m_state[4];
+			m_vel[2] = m_state[5];
+		}
 
 		// Returns Position in local space
 		public Vector3 getPos() {
@@ -93,11 +101,13 @@ namespace AssemblyCSharp
 		}
 
 		public void offsetPos(Vector3 offset) {
-			m_pos += offset;
+			//if (!pinned) {
+				m_pos += offset;
 
-			m_state [0] = m_pos.x;
-			m_state [1] = m_pos.y;
-			m_state [2] = m_pos.z;
+				m_state [0] = m_pos.x;
+				m_state [1] = m_pos.y;
+				m_state [2] = m_pos.z;
+			//}
 		}
 
 		// Approximate velocity based on the old position, current position, and a small deltatime
@@ -218,6 +228,7 @@ namespace AssemblyCSharp
 		public void computeDynamics() {
 			float[] state = m_state; 
 			float[] stateDot = m_stateDot;
+			float deltaT = m_deltaT;
 			/*	State vector:
 			*  0 : position x
 			*  1 : position y

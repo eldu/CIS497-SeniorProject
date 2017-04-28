@@ -9,20 +9,23 @@ namespace AssemblyCSharp
 	public class myParticleSystem : MonoBehaviour
 	{
 		public GameObject[] obstacles;
+		public Vector3 k;
 
 		private Vector3[] vert;
 		private int[] tria;
 		private Mesh mesh;
 
+		Vector3 topLeft;
+		Vector3 topRight;
+
 		public int particleWidth = 5; // number of particles in width
 		public int particleHeight = 5; // number of particles in height
 		public float width = 5.0f;
 		public float height = 5.0f;
-		public int iterations = 2;
+		public int iterations = 5;
 		public Vector3 windDirection = new Vector3 (0.5f, 0.0f, 0.2f);
 
 		private myParticle[] particles;
-		private myParticle[] pinned;
 		List<Constraint> constraints;
 
 		public Vector3[] getVertices() {
@@ -74,9 +77,17 @@ namespace AssemblyCSharp
 		}
 
 		void Start () {
+			k = new Vector3 (0.01f, 0.01f, 0.01f);
+
 			// Set Obstacles
 			obstacles = GameObject.FindGameObjectsWithTag("Obstacle");
-	
+
+
+			// Set Pin Local Locations
+			topLeft = new Vector3(0.0f, 0.0f, 0.0f);
+			topRight = new Vector3 (width, 0.0f, 0.0f);
+
+
 			// Create
 			particles = new myParticle[particleWidth * particleHeight];
 			constraints = new List<Constraint>();
@@ -93,18 +104,16 @@ namespace AssemblyCSharp
 					Vector3 position = new Vector3 (width * (i / (float) (particleWidth - 1)),
 						-height * (j / (float) (particleHeight - 1)),
 						                   0.0f);
+					position = position;
+
 					particles[idx] = new myParticle (position);
 					vert [idx++] = position;
 				}
 			}
 
-
-			//			// Set Pin Local Locations
-			//			topLeft = new Vector3(0.0f, 0.0f, 0.0f);
-			//			topRight = new Vector3 (width, 0.0f, 0.0f);
-			pinned = new myParticle[2];
-			pinned [0] = getParticle (0, 0);
-			pinned [1] = getParticle (particleWidth - 1, 0);
+			for (int i = 0; i < particleHeight; i++) {
+				particles [getParticleIdx (0, i)].setPinned (true);
+			}
 
 			// Create all of the constraints
 			// Stretch Spring, Shear Springs
@@ -134,28 +143,28 @@ namespace AssemblyCSharp
 				makeConstraint (getParticle(particleWidth - 1, j), getParticle(particleWidth - 1, j + 1));
 			}
 
-			// Bend Constraints ------------------------------------------------ /
-//			for(int i = 0; i <particleWidth - 2; i++)
-//			{
-//				for(int j=0; j < particleHeight - 2; j++)
-//				{
-//					makeConstraint(getParticle(i, j), getParticle(i + 2,j));
-//					makeConstraint(getParticle(i, j), getParticle(i, j + 2));
-//					makeConstraint(getParticle(i, j), getParticle(i + 2,j + 2));
-//					makeConstraint(getParticle(i + 2, j), getParticle(i, j + 2));			
-//				}
-//			}
-//
-//			// Bottom Row
-//			for (int i = 0; i < particleWidth - 2; i++) {
-//				makeConstraint (getParticle (i, particleHeight - 2), getParticle (i + 2, particleHeight - 2));
-//			}
-//
-//			// Right most
-//			for (int j = 0; j < particleHeight - 2; j++) {
-//				makeConstraint (getParticle(particleWidth - 2, j), getParticle(particleWidth - 2, j + 2));
-//			}
-//
+			// Bend Constraints
+			for(int i = 0; i <particleWidth - 2; i++)
+			{
+				for(int j=0; j < particleHeight - 2; j++)
+				{
+					makeConstraint(getParticle(i, j), getParticle(i + 2,j));
+					makeConstraint(getParticle(i, j), getParticle(i, j + 2));
+					makeConstraint(getParticle(i, j), getParticle(i + 2,j + 2));
+					makeConstraint(getParticle(i + 2, j), getParticle(i, j + 2));			
+				}
+			}
+
+			// Bottom Row
+			for (int i = 0; i < particleWidth - 2; i++) {
+				makeConstraint (getParticle (i, particleHeight - 2), getParticle (i + 2, particleHeight - 2));
+			}
+
+			// Right most
+			for (int j = 0; j < particleHeight - 2; j++) {
+				makeConstraint (getParticle(particleWidth - 2, j), getParticle(particleWidth - 2, j + 2));
+			}
+
 			// Create the triangles
 			idx = 0;
 			for (int i = 0; i < particleWidth - 1; i++) {
@@ -177,7 +186,6 @@ namespace AssemblyCSharp
 		}
 	
 		void FixedUpdate() {
-
 			addWindForce (windDirection);
 
 			for (int i = 0; i < particles.Length ; i++) {
@@ -195,11 +203,14 @@ namespace AssemblyCSharp
 					constraints [j].satisfy ();
 				}
 					
-				// Pinning
-				for (int k = 0; k < pinned.Length; k++) {
-					pinned[k].pin();
+				// HARDCODED PINNING.
+				// REMOVE IF STATEMENTS if (!pinned) if this is uncommented
+				vert [getParticleIdx(0, 0)] = transform.position + topLeft;
+				vert [getParticleIdx(particleWidth - 1, 0)] = transform.position + topRight;
 
-				}
+				getParticle (0, 0).setPos (vert [getParticleIdx(0, 0)]);
+				getParticle (particleWidth - 1, 0).setPos (vert [getParticleIdx(particleWidth - 1, 0)]);
+
 
 				//SPHERE COLLISION
 				for (int k = 0; k < obstacles.Length; k++) {
