@@ -104,7 +104,6 @@ namespace AssemblyCSharp
 					Vector3 position = new Vector3 (width * (i / (float) (particleWidth - 1)),
 						-height * (j / (float) (particleHeight - 1)),
 						                   0.0f);
-					position = position;
 
 					particles[idx] = new myParticle (position);
 					vert [idx++] = position;
@@ -223,7 +222,7 @@ namespace AssemblyCSharp
 
 //		void OnDrawGizmos() {
 //			for (int i = 0; i < particles.Length; i++) {
-//				Gizmos.DrawSphere (particles [i].getPos (), 0.1f);
+//				Gizmos.DrawSphere (particles [i].getPos () + transform.position, 0.1f);
 //			}
 //		}
 	}

@@ -11,18 +11,15 @@ namespace AssemblyCSharp
 		public List<Constraint> cs; // list of constraints
 		public Vector3 k; // Spring Constant
 
-		private int m_dim;
-
 		// State Vector
 		private float[] m_state;
 
 		// Derivative of the state vector
-		private float[] m_stateDot; 
+		private float[] m_stateDot;  
 
-		// One simulation step
-		private float m_deltaT; 
+		private float[] p_state;
 
-		private float m_mass = 1.0f;
+		private float m_mass = 10.0f;
 		private Vector3 m_pos;
 		private Vector3 m_opos; // Old Position;
 		private Vector3 m_vel;
@@ -35,10 +32,12 @@ namespace AssemblyCSharp
 			m_original = position;
 
 			cs = new List<Constraint> ();
-			k = new Vector3(0.1f, 0.01f, 0.01f);
+			k = new Vector3(0.0009f, 0.0009f, 0.0009f);
 	
-			m_gravity = new Vector3 (0.0f, 0.0f, 0.0f);
+			m_gravity = new Vector3 (0.0f, -9.8f, 0.0f);
 			m_wind = new Vector3 (0.0f, 0.0f, 0.0f);
+
+			p_state = new float[6];
 
 			m_state = new float[10];
 			m_state [0] = position.x;            // Current Position
@@ -61,20 +60,6 @@ namespace AssemblyCSharp
 
 		public void addConstraint(Constraint c) {
 			cs.Add (c);
-		}
-
-		// Set the particle state vector
-		public void setState(float[] newState) {
-			for (int i = 0; i < m_dim; i++)
-				m_state[i] = newState[i];
-
-			m_pos[0] = m_state[0];
-			m_pos[1] = m_state[1]; 
-			m_pos[2] = m_state[2];
-
-			m_vel[0] = m_state[3];
-			m_vel[1] = m_state[4];
-			m_vel[2] = m_state[5];
 		}
 
 		// Returns Position in local space
@@ -112,16 +97,6 @@ namespace AssemblyCSharp
 			m_stateDot [2] = m_vel [2];
 		}
 
-		// Get the state vector
-		public float[] getState () {
-			return m_state;
-		}
-
-		// Get the stateDot  vector
-		public float[] getStateDot () {
-			return m_stateDot;
-		}
-
 		// Updates the particle state
 		// Uses RK2
 		public void updateState(float deltaT) {
@@ -130,8 +105,6 @@ namespace AssemblyCSharp
 
 			// RK2 Integration
 			// Predicted state at t_k+1
-			float[] p_state = new float[12];
-
 			// x_p(t_k+1) = x(t_k) + v(t_k) * deltaT;
 			p_state[0] = m_state[0] + m_stateDot[0] * deltaT;
 			p_state[1] = m_state[1] + m_stateDot[1] * deltaT;
@@ -199,9 +172,6 @@ namespace AssemblyCSharp
 		// deltaT: change in time
 		// Given the state, computes stateDot
 		public void computeDynamics() {
-			float[] state = m_state; 
-			float[] stateDot = m_stateDot;
-			float deltaT = m_deltaT;
 			/*	State vector:
 			*  0 : position x
 			*  1 : position y
@@ -215,21 +185,21 @@ namespace AssemblyCSharp
 			*/
 
 			// Derivatives of position is the velocity;
-			stateDot[0] = state[3];
-			stateDot[1] = state[4];
-			stateDot[2] = state[5];
+			m_stateDot[0] = m_state[3];
+			m_stateDot[1] = m_state[4];
+			m_stateDot[2] = m_state[5];
 
 			// Derivatives of the velocity
 			// v = f/m
-			stateDot[3] = state[6] / m_mass;
-			stateDot[4] = state[7] / m_mass;
-			stateDot[5] = state[8] / m_mass;
+			m_stateDot[3] = m_state[6] / m_mass;
+			m_stateDot[4] = m_state[7] / m_mass;
+			m_stateDot[5] = m_state[8] / m_mass;
 
-
+			
 			// Force and mass are constant therefore their derivatives are 0
-			stateDot[6] = 0; // force x
-			stateDot[7] = 0; // force y
-			stateDot[8] = 0; // force z
+			m_stateDot[6] = 0; // force x
+			m_stateDot[7] = 0; // force y
+			m_stateDot[8] = 0; // force z
 		}
 
 		// Computes one simulation step update
