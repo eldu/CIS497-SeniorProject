@@ -28,10 +28,6 @@ namespace AssemblyCSharp
 		private myParticle[] particles;
 		List<Constraint> constraints;
 
-		public Vector3[] getVertices() {
-			return vert;
-		}
-
 		int getParticleIdx(int i, int j) {
 			return j * particleWidth + i;
 		}
@@ -40,33 +36,8 @@ namespace AssemblyCSharp
 			return particles [j * particleWidth + i];
 		}
 
-		public void setVertex(int idx, Vector3 value) {
-			vert [idx] = value;
-		}
-
 		public void makeConstraint(myParticle p1, myParticle p2) {
 			constraints.Add (new Constraint (p1, p2));
-		}
-
-		// Not normalized
-		// Length of normal = parallelagram formed by p1, p2, and p3
-		Vector3 getTriangleNormal(myParticle p1, myParticle p2, myParticle p3) {
-			Vector3 v12 = p2.getPos () - p1.getPos ();
-			Vector3 v13 = p3.getPos () - p1.getPos ();
-			v12.Normalize ();
-			v13.Normalize ();
-
-			return Vector3.Cross (v12, v13);
-		}
-
-		// Just gets a normalized normal from the triangle points
-		Vector3 getNormal(Vector3 p1, Vector3 p2, Vector3 p3) {
-			Vector3 v12 = p2 - p1;
-			Vector3 v13 = p3 - p1;
-			Vector3 normal = Vector3.Cross (v12, v13);
-			normal.Normalize ();
-		
-			return normal;
 		}
 
 		// Add wind force to the entire cloth

@@ -58,6 +58,10 @@ namespace AssemblyCSharp
 			m_stateDot = new float[10];
 		}
 
+		public void pin(Matrix4x4 t) {
+			setPos (t * m_original);
+		}
+
 		public void addConstraint(Constraint c) {
 			cs.Add (c);
 		}
