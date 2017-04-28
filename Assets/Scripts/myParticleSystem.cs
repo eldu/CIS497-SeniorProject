@@ -111,10 +111,6 @@ namespace AssemblyCSharp
 				}
 			}
 
-			for (int i = 0; i < particleHeight; i++) {
-				particles [getParticleIdx (0, i)].setPinned (true);
-			}
-
 			// Create all of the constraints
 			// Stretch Spring, Shear Springs
 			// A -  B
@@ -144,27 +140,27 @@ namespace AssemblyCSharp
 			}
 
 			// Bend Constraints
-			for(int i = 0; i <particleWidth - 2; i++)
-			{
-				for(int j=0; j < particleHeight - 2; j++)
-				{
-					makeConstraint(getParticle(i, j), getParticle(i + 2,j));
-					makeConstraint(getParticle(i, j), getParticle(i, j + 2));
-					makeConstraint(getParticle(i, j), getParticle(i + 2,j + 2));
-					makeConstraint(getParticle(i + 2, j), getParticle(i, j + 2));			
-				}
-			}
-
-			// Bottom Row
-			for (int i = 0; i < particleWidth - 2; i++) {
-				makeConstraint (getParticle (i, particleHeight - 2), getParticle (i + 2, particleHeight - 2));
-			}
-
-			// Right most
-			for (int j = 0; j < particleHeight - 2; j++) {
-				makeConstraint (getParticle(particleWidth - 2, j), getParticle(particleWidth - 2, j + 2));
-			}
-
+//			for(int i = 0; i <particleWidth - 2; i++)
+//			{
+//				for(int j=0; j < particleHeight - 2; j++)
+//				{
+//					makeConstraint(getParticle(i, j), getParticle(i + 2,j));
+//					makeConstraint(getParticle(i, j), getParticle(i, j + 2));
+//					makeConstraint(getParticle(i, j), getParticle(i + 2,j + 2));
+//					makeConstraint(getParticle(i + 2, j), getParticle(i, j + 2));			
+//				}
+//			}
+//
+//			// Bottom Row
+//			for (int i = 0; i < particleWidth - 2; i++) {
+//				makeConstraint (getParticle (i, particleHeight - 2), getParticle (i + 2, particleHeight - 2));
+//			}
+//
+//			// Right most
+//			for (int j = 0; j < particleHeight - 2; j++) {
+//				makeConstraint (getParticle(particleWidth - 2, j), getParticle(particleWidth - 2, j + 2));
+//			}
+//
 			// Create the triangles
 			idx = 0;
 			for (int i = 0; i < particleWidth - 1; i++) {
@@ -204,12 +200,8 @@ namespace AssemblyCSharp
 				}
 					
 				// HARDCODED PINNING.
-				// REMOVE IF STATEMENTS if (!pinned) if this is uncommented
-				vert [getParticleIdx(0, 0)] = transform.position + topLeft;
-				vert [getParticleIdx(particleWidth - 1, 0)] = transform.position + topRight;
-
-				getParticle (0, 0).setPos (vert [getParticleIdx(0, 0)]);
-				getParticle (particleWidth - 1, 0).setPos (vert [getParticleIdx(particleWidth - 1, 0)]);
+				getParticle (0, 0).setPos (transform.position + topLeft);
+				getParticle (particleWidth - 1, 0).setPos (transform.position + topRight);
 
 
 				//SPHERE COLLISION

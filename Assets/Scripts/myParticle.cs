@@ -8,12 +8,10 @@ namespace AssemblyCSharp
 	public class myParticle
 	{
 		// Determines if this is fixed
-		// private bool pinned;
 		public List<Constraint> cs; // list of constraints
 		public Vector3 k; // Spring Constant
 
 		private int m_dim;
-		private bool pinned;
 
 		// State Vector
 		private float[] m_state;
@@ -38,8 +36,6 @@ namespace AssemblyCSharp
 
 			cs = new List<Constraint> ();
 			k = new Vector3(0.1f, 0.01f, 0.01f);
-
-			pinned = false;
 	
 			m_gravity = new Vector3 (0.0f, 0.0f, 0.0f);
 			m_wind = new Vector3 (0.0f, 0.0f, 0.0f);
@@ -67,10 +63,6 @@ namespace AssemblyCSharp
 
 		public void addConstraint(Constraint c) {
 			cs.Add (c);
-		}
-			
-		public void setPinned(bool b) {
-			pinned = b;
 		}
 
 		// Set the particle state vector
@@ -101,13 +93,11 @@ namespace AssemblyCSharp
 		}
 
 		public void offsetPos(Vector3 offset) {
-			//if (!pinned) {
-				m_pos += offset;
+			m_pos += offset;
 
-				m_state [0] = m_pos.x;
-				m_state [1] = m_pos.y;
-				m_state [2] = m_pos.z;
-			//}
+			m_state [0] = m_pos.x;
+			m_state [1] = m_pos.y;
+			m_state [2] = m_pos.z;
 		}
 
 		// Approximate velocity based on the old position, current position, and a small deltatime
@@ -210,9 +200,6 @@ namespace AssemblyCSharp
 			for (int i = 0; i < cs.Count; i++) {
 				addForce (-k * (cs [i].getlength () - cs [i].getRestLength ()));
 			}
-
-			// Reset wind and constraint forces
-			m_wind.Set(0.0f, 0.0f, 0.0f);
 		}
 
 		public void addWindForce(Vector3 force) {
@@ -264,10 +251,8 @@ namespace AssemblyCSharp
 
 		// Computes one simulation step update
 		public void updateParticle (float deltaTime) {
-			//if (!pinned) {
-				computeForces ();
-				updateState (deltaTime);
-			//}
+			computeForces ();
+			updateState (deltaTime);
 		}
 
 		// Pushes 
