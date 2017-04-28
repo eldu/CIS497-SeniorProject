@@ -170,8 +170,8 @@ namespace AssemblyCSharp
 				}
 					
 				// HARDCODED PINNING.
-				getParticle (0, 0).setPos (transform.position + topLeft);
-				getParticle (particleWidth - 1, 0).setPos (transform.position + topRight);
+				getParticle (0, 0).setPos (transform.TransformPoint(topLeft)); // World space
+				getParticle (particleWidth - 1, 0).setPos (transform.TransformPoint(topRight));
 
 
 				//SPHERE COLLISION
@@ -185,7 +185,7 @@ namespace AssemblyCSharp
 
 			// Sets Vertices of the Mesh to the Particle Positions
 			for (int i = 0; i < particles.Length ; i++) {
-				vert[i] = particles [i].getPos() - transform.position;
+				vert[i] = transform.InverseTransformPoint(particles [i].getPos()); // Local space
 			}
 			GetComponent<MeshFilter> ().mesh.vertices = vert;
 		}
