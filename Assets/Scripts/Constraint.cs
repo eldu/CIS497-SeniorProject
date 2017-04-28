@@ -16,8 +16,8 @@ namespace AssemblyCSharp
 			p2 = _p2;
 			restLength = Vector3.Magnitude(p2.getPos () - p1.getPos ());
 
-			p1.addConstraint (this);
-			p2.addConstraint (this);
+//			p1.addConstraint (this);
+//			p2.addConstraint (this);
 		}
 
 		public float getRestLength() {

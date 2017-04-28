@@ -22,7 +22,7 @@ namespace AssemblyCSharp
 		public int particleHeight = 5; // number of particles in height
 		public float width = 5.0f;
 		public float height = 5.0f;
-		public int iterations = 5;
+		public int iterations = 1;
 		public Vector3 windDirection = new Vector3 (0.5f, 0.0f, 0.2f);
 
 		private myParticle[] particles;
@@ -109,7 +109,7 @@ namespace AssemblyCSharp
 				makeConstraint (getParticle(particleWidth - 1, j), getParticle(particleWidth - 1, j + 1));
 			}
 
-			// Bend Constraints
+//			// Bend Constraints
 //			for(int i = 0; i <particleWidth - 2; i++)
 //			{
 //				for(int j=0; j < particleHeight - 2; j++)
@@ -130,7 +130,7 @@ namespace AssemblyCSharp
 //			for (int j = 0; j < particleHeight - 2; j++) {
 //				makeConstraint (getParticle(particleWidth - 2, j), getParticle(particleWidth - 2, j + 2));
 //			}
-//
+
 			// Create the triangles
 			idx = 0;
 			for (int i = 0; i < particleWidth - 1; i++) {
@@ -156,6 +156,7 @@ namespace AssemblyCSharp
 
 			for (int i = 0; i < particles.Length ; i++) {
 				particles [i].updateVel (Time.deltaTime); // Update Velocities
+				// particles [i].updateAcc (Time.deltaTime);
 				particles [i].computeDynamics();
 			}
 

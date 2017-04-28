@@ -11,7 +11,7 @@ namespace AssemblyCSharp
 		public List<Constraint> cs; // list of constraints
 		public Vector3 k; // Spring Constant
 
-		public float damping = 0.04f;
+		public float damping = 0.01f;
 		private float drag;
 
 		// State Vector
@@ -22,10 +22,11 @@ namespace AssemblyCSharp
 
 		private float[] p_state;
 
-		private float m_mass = 10.0f;
+		private float m_mass = 1.0f;
 		private Vector3 m_pos;
 		private Vector3 m_opos; // Old Position;
 		private Vector3 m_vel;
+		private Vector3 m_ovel;
 		private Vector3 m_gravity;
 		private Vector3 m_wind;
 
@@ -56,6 +57,7 @@ namespace AssemblyCSharp
 			m_pos = new Vector3 (position.x, position.y, position.z);
 			m_opos = new Vector3 (position.x, position.y, position.z);
 			m_vel = new Vector3 (0.0f, 0.0f, 0.0f);
+			m_ovel = new Vector3 (0.0f, 0.0f, 0.0f);
 
 			m_stateDot = new float[6];
 		}
@@ -64,9 +66,9 @@ namespace AssemblyCSharp
 			setPos (t * m_original);
 		}
 
-		public void addConstraint(Constraint c) {
-			cs.Add (c);
-		}
+//		public void addConstraint(Constraint c) {
+//			cs.Add (c);
+//		}
 
 		// Returns Position in local space
 		public Vector3 getPos() {
@@ -103,19 +105,23 @@ namespace AssemblyCSharp
 			m_stateDot [2] = m_vel [2];
 		}
 
+		public void updateAcc(float deltaTime) {
+			m_stateDot [3] = (m_vel[0] - m_ovel[0]) / deltaTime;
+			m_stateDot [4] = (m_vel[1] - m_ovel[1]) / deltaTime;
+			m_stateDot [5] = (m_vel[2] - m_ovel[2]) / deltaTime;
+		}
+
 		// Updates the particle state
 		// Uses RK2
 		public void updateState(float deltaT) {
-			// COmpute Dynamics
-			// computeDynamics (m_state, m_stateDot, deltaT);
 			drag = 1.0f - damping;
 
 			// RK2 Integration
 			// Predicted state at t_k+1
 			// x_p(t_k+1) = x(t_k) + v(t_k) * deltaT;
-			p_state[0] = (m_state[0] + m_stateDot[0] * deltaT) * drag;
-			p_state[1] = (m_state[1] + m_stateDot[1] * deltaT) * drag;
-			p_state[2] = (m_state[2] + m_stateDot[2] * deltaT) * drag;
+			p_state[0] = m_state[0] + m_stateDot[0] * deltaT;
+			p_state[1] = m_state[1] + m_stateDot[1] * deltaT;
+			p_state[2] = m_state[2] + m_stateDot[2] * deltaT;
 
 
 			// v_p(t_k+1) = v(t_k) + a(t_k) * deltaT;
@@ -124,9 +130,9 @@ namespace AssemblyCSharp
 			p_state[5] = m_state[5] + m_stateDot[5] * deltaT;
 
 			// x(t_k+1) = x(t_k) + deltaT / 2 * (v(t_k) + v_p(t_k+1))
-			m_state[0] = m_state[0] + deltaT / 2.0f * (m_stateDot[0] + p_state[3]);
-			m_state[1] = m_state[1] + deltaT / 2.0f * (m_stateDot[1] + p_state[4]);
-			m_state[2] = m_state[2] + deltaT / 2.0f * (m_stateDot[2] + p_state[5]);
+			m_state[0] = m_state[0] + deltaT / 2.0f * (m_stateDot[0] + p_state[3]) * drag;
+			m_state[1] = m_state[1] + deltaT / 2.0f * (m_stateDot[1] + p_state[4]) * drag;
+			m_state[2] = m_state[2] + deltaT / 2.0f * (m_stateDot[2] + p_state[5]) * drag;
 
 			// v(t_k+1) = v(t_k) + deltaT / 2 * (a(t_k) + a_p(t_k+1));
 			// a_p(t_k+1) = a + deltaT * f(a) = a + deltaT * 0 = a
@@ -137,6 +143,7 @@ namespace AssemblyCSharp
 
 			// Update Position and Velocity
 			m_opos = m_pos; // Set old position;
+			m_ovel = m_vel;
 
 			m_pos[0] = m_state[0];
 			m_pos[1] = m_state[1];
