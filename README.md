@@ -36,18 +36,18 @@ https://vimeo.com/169599296
 		- Wind Direction
 
 ### Demo
-[Presentation](https://vimeo.com/215362321)
+- [Presentation](https://vimeo.com/215362321)
 
 Final Demos (Also has statistics on them)
-[Single Cloth](https://vimeo.com/215362077)
-[Single Cloth with Sphere](https://vimeo.com/215362073)
-[Muliple Cloths](https://vimeo.com/215362072)
+- [Single Cloth](https://vimeo.com/215362077)
+- [Single Cloth with Sphere](https://vimeo.com/215362073)
+- [Muliple Cloths](https://vimeo.com/215362072)
 
 Previous Videos
-[Debug Particle Visualization](https://vimeo.com/215362096)
-[Beta: Sphere Collision](https://vimeo.com/215362092)
-[Beta: Multiple Sphere Collision](https://vimeo.com/215362090)
-[Long Video Messing Around with Cloth](https://vimeo.com/215362083)
+- [Debug Particle Visualization](https://vimeo.com/215362096)
+- [Beta: Sphere Collision](https://vimeo.com/215362092)
+- [Beta: Multiple Sphere Collision](https://vimeo.com/215362090)
+- [Long Video Messing Around with Cloth](https://vimeo.com/215362083)
 
 ### Techniques
 - Mass Spring Model
